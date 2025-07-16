@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B41DD8A42E2769D000BC1FE2 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = B41DD8A32E2769D000BC1FE2 /* Moya */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		B4D318422E2629E500FEAD5E /* safe-escape-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "safe-escape-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B41DD8A42E2769D000BC1FE2 /* Moya in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = "safe-escape-ios";
 			packageProductDependencies = (
+				B41DD8A32E2769D000BC1FE2 /* Moya */,
 			);
 			productName = "safe-escape-ios";
 			productReference = B4D318422E2629E500FEAD5E /* safe-escape-ios.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = B4D318392E2629E500FEAD5E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B41DD8A22E2769D000BC1FE2 /* XCRemoteSwiftPackageReference "Moya" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B4D318432E2629E500FEAD5E /* Products */;
 			projectDirPath = "";
@@ -326,6 +335,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B41DD8A22E2769D000BC1FE2 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B41DD8A32E2769D000BC1FE2 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B41DD8A22E2769D000BC1FE2 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B4D3183A2E2629E500FEAD5E /* Project object */;
 }

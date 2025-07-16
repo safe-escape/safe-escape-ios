@@ -8,15 +8,29 @@
 
 /* Begin PBXBuildFile section */
 		B41DD8A42E2769D000BC1FE2 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = B41DD8A32E2769D000BC1FE2 /* Moya */; };
+		B41DD8A72E276A7800BC1FE2 /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = B41DD8A62E276A7800BC1FE2 /* NMapsMap */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B4D318422E2629E500FEAD5E /* safe-escape-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "safe-escape-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B41DD8A92E276AFC00BC1FE2 /* Exceptions for "safe-escape-ios" folder in "safe-escape-ios" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B4D318412E2629E500FEAD5E /* safe-escape-ios */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B4D318442E2629E500FEAD5E /* safe-escape-ios */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B41DD8A92E276AFC00BC1FE2 /* Exceptions for "safe-escape-ios" folder in "safe-escape-ios" target */,
+			);
 			path = "safe-escape-ios";
 			sourceTree = "<group>";
 		};
@@ -28,6 +42,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B41DD8A42E2769D000BC1FE2 /* Moya in Frameworks */,
+				B41DD8A72E276A7800BC1FE2 /* NMapsMap in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +86,7 @@
 			name = "safe-escape-ios";
 			packageProductDependencies = (
 				B41DD8A32E2769D000BC1FE2 /* Moya */,
+				B41DD8A62E276A7800BC1FE2 /* NMapsMap */,
 			);
 			productName = "safe-escape-ios";
 			productReference = B4D318422E2629E500FEAD5E /* safe-escape-ios.app */;
@@ -102,6 +118,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B41DD8A22E2769D000BC1FE2 /* XCRemoteSwiftPackageReference "Moya" */,
+				B41DD8A52E276A7800BC1FE2 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B4D318432E2629E500FEAD5E /* Products */;
@@ -265,6 +282,7 @@
 				DEVELOPMENT_TEAM = 82284R328R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "safe-escape-ios/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -294,6 +312,7 @@
 				DEVELOPMENT_TEAM = 82284R328R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "safe-escape-ios/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -345,6 +364,14 @@
 				minimumVersion = 15.0.3;
 			};
 		};
+		B41DD8A52E276A7800BC1FE2 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/navermaps/SPM-NMapsMap";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.22.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -352,6 +379,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B41DD8A22E2769D000BC1FE2 /* XCRemoteSwiftPackageReference "Moya" */;
 			productName = Moya;
+		};
+		B41DD8A62E276A7800BC1FE2 /* NMapsMap */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B41DD8A52E276A7800BC1FE2 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
+			productName = NMapsMap;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

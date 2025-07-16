@@ -8,4 +8,6 @@
 // Configuration settings file format documentation can be found at:
 // https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
 
+NMFNcpKeyId = __네이버_지도_API_KEY_PLACEHOLDER__
+
 #include? "Config.secret.xcconfig"

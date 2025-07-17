@@ -8,10 +8,16 @@
 import SwiftUI
 
 @main
-struct safe_escape_iosApp: App {
+struct SafeEscapeApp: App {
+    @State var showIntro: Bool = true
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if showIntro {
+                IntroView(show: $showIntro)
+            } else {
+                ContentView()
+            }
         }
     }
 }

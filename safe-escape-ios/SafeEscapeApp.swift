@@ -17,7 +17,8 @@ struct SafeEscapeApp: App {
             if showIntro {
                 IntroView(show: $showIntro)
             } else {
-                ContentView()
+                MainView()
+                    .environmentObject(navigationViewModel)
             }
         }
     }

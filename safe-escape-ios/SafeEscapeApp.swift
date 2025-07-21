@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct SafeEscapeApp: App {
     @State var showIntro: Bool = true
+    @StateObject var navigationViewModel: NavigationViewModel = .init()
     
     var body: some Scene {
         WindowGroup {

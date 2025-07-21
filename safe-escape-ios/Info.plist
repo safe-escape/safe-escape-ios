@@ -4,5 +4,12 @@
 <dict>
 	<key>NMFNcpKeyId</key>
 	<string>$(NMFNcpKeyId)</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>NotoSansKR-Bold.ttf</string>
+		<string>NotoSansKR-SemiBold.ttf</string>
+		<string>NotoSansKR-Medium.ttf</string>
+		<string>NotoSansKR-Regular.ttf</string>
+	</array>
 </dict>
 </plist>

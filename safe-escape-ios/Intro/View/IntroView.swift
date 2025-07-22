@@ -71,7 +71,7 @@ struct IntroView: View {
                 bounce = false
             }
             
-            try? await Task.sleep(for: .seconds(0.7))
+            try? await Task.sleep(for: .seconds(logoAnimationCount < 1 ? 0.7 : 0.8))
             logoAnimationCount += 1
         }
     }

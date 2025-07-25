@@ -16,10 +16,17 @@ struct MainView: View {
             TabView(selection: $navigationViewModel.page) {
                 ForEach(viewModel.tabs, id: \.page) { tab in
                     // TODO: 페이지 생성 시 추가 필요
+                    if tab.page == .home {
+                        HomeView()
+                    } else {
+                        VStack {
+                            Spacer()
+                        }
+                    }
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .padding(.bottom, 40)
+            .padding(.bottom, 50)
             .overlay(alignment: .bottom) {
                 // 탭바
                 TabBarView(currentPage: $navigationViewModel.page, tabs: viewModel.tabs)

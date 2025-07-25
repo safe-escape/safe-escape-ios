@@ -19,4 +19,9 @@ class FindUsecase {
         try await FindRepository.shared.findAddress(input)
     }
     
+    // 경로 검색
+    func findRoute(from start: Coordinate, to end: Coordinate) async throws -> Route {
+        try await FindRepository.shared.findRoute(start, end)
+    }
+    
 }

@@ -6,6 +6,8 @@
 	<string>${NMFNcpKey}</string>
 	<key>NMFNcpKeyId</key>
 	<string>$(NMFNcpKeyId)</string>
+	<key>TMapAppKey</key>
+	<string>${TMapAppKey}</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>NotoSansKR-Bold.ttf</string>

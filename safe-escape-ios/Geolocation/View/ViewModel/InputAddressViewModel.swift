@@ -7,6 +7,12 @@
 
 import Foundation
 
+enum InputFocusState {
+    case none
+    case focusIn
+    case focusOut
+}
+
 // 주소 검색 뷰 타입
 enum InputAddressViewType {
     case shadow // background + shadow
@@ -23,6 +29,9 @@ enum InputAddressError {
 class InputAddressViewModel: ObservableObject {
     // input
     @Published var textInputAddress: String = ""
+    
+    // 포커스 요청
+    @Published var focusRequest: InputFocusState = .none
     
     // 주소 리스트 및 노출 여부
     @Published var showAddressList: Bool = false
@@ -47,6 +56,11 @@ class InputAddressViewModel: ObservableObject {
         // 마지막 검색한 주소와 input이 동일하고 해당 주소 리스트가 있는 경우, 주소 리스트 다시 노출
         guard textInputAddress != lastFindAddress || addressList.isEmpty else {
             self.showAddressList = true
+            return
+        }
+        
+        // input과 선택한 도로명 주소가 동일하면 return
+        guard textInputAddress != selectedAddress?.road else {
             return
         }
         

@@ -62,17 +62,38 @@ struct CrowdedExpectView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(.borderD7D7D7, lineWidth: 1)
             )
+            .contentShape(Rectangle())
             .onTapGesture {
+                viewModel.inputAddressViewModel.focusRequest = .focusOut
                 viewModel.showDatePicker.toggle()
             }
             .overlay(alignment: .top) {
                 VStack {
                     DatePicker("", selection: $viewModel.selectedExpectedDate, in: Date()..., displayedComponents: .date)
                         .datePickerStyle(.graphical)
+                        .environment(\.locale, Locale(identifier: "ko_KR"))
                         .labelsHidden()
                         .scaleEffect(0.95)
+                    
+                    HStack(spacing: 0) {
+                        Spacer()
+                        
+                        Text("확인")
+                            .font(.notosans(type: .medium, size: 15))
+                            .foregroundStyle(Color.white)
+                        
+                        Spacer()
+                    }
+                    .frame(height: 46)
+                    .background(Color.accent)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        viewModel.changeDate()
+                    }
+                    .padding(.top, -5)
                 }
                 .padding(.top, -10)
+                .cornerRadius(10)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
                         .fill(.white)

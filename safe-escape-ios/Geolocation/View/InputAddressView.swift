@@ -34,12 +34,21 @@ struct InputAddressView: View {
                 viewModel.showAddressList = false
             }
             .onChange(of: viewModel.errorState) { state in
-                guard let state else {
+                guard state != nil else {
                     return
                 }
                 
                 // 에러 있는 경우, 다시 입력하도록 포커스 처리
                 inputAddressFocused = true
+            }
+            .onChange(of: viewModel.focusRequest) { req in
+                guard req != .none else {
+                    return
+                }
+                
+                // 포커스 요청에 따라 포커싱 처리
+                inputAddressFocused = req == .focusIn
+                viewModel.focusRequest = .none
             }
             
             Spacer(minLength: 0)

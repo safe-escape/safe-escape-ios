@@ -15,18 +15,7 @@ class CrowdedViewModel: ObservableObject {
     @Published var defaultExpectedText: [String]?
     
     @Published var expectedDate: String = "날짜"
-    @Published var selectedExpectedDate = Calendar.current.date(byAdding: .day, value: -1, to: Date())! {
-        didSet {
-            guard let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date()), selectedExpectedDate > yesterday else {
-                return
-            }
-                
-            expectedDate = selectedExpectedDate.format()
-            showDatePicker = false
-            
-            enableExpectButton = (inputAddressViewModel.selectedAddress != nil)
-        }
-    }
+    @Published var selectedExpectedDate = Date()
     @Published var showDatePicker: Bool = false
     
     @Published var expectedCrowded: Crowded?
@@ -51,7 +40,7 @@ class CrowdedViewModel: ObservableObject {
         
         inputAddressViewModel.$selectedAddress
             .sink { address in
-                self.enableExpectButton = (address != nil) && (self.selectedExpectedDate >= Date())
+                self.enableExpectButton = (address != nil) && (!self.expectedDate.contains("날짜"))
             }
             .store(in: &cancellables)
     }
@@ -59,6 +48,13 @@ class CrowdedViewModel: ObservableObject {
     func requestData() {
         // TODO: API 연동
         defaultExpectedText = ["💬 일요일엔 ", "홍대입구", "가 가장 혼잡해요 !"]
+    }
+    
+    func changeDate() {
+        expectedDate = selectedExpectedDate.format()
+        showDatePicker = false
+        
+        enableExpectButton = (inputAddressViewModel.selectedAddress != nil)
     }
     
     func expectCrowded() {

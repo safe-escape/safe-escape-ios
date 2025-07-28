@@ -42,7 +42,7 @@ struct HomeView: View {
                         .contentShape(Rectangle())
                         .onTapGesture {
                             // 혼잡도 탭으로 이동
-                            navigationViewModel.navigate(.congestion)
+                            navigationViewModel.navigate(.crowded)
                         }
                         .padding(.top, 9)
                         .padding(.leading, 12)

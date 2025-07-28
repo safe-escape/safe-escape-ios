@@ -56,3 +56,23 @@ public enum TimeFormatter {
     }
     
 }
+
+public enum TopicFormatter {
+    
+    public static func appendTopicMarker(_ word: String) -> String {
+        guard let lastChar = word.last else { return word }
+
+        let scalar = lastChar.unicodeScalars.first!.value
+
+        // 한글 유니코드 범위: 가(0xAC00) ~ 힣(0xD7A3)
+        let base: UInt32 = 0xAC00
+        let lastCharIndex = scalar - base
+
+        // 받침이 있으면: index % 28 != 0
+        let hasFinalConsonant = (lastCharIndex % 28) != 0
+
+        let marker = hasFinalConsonant ? "은" : "는"
+        return word + marker
+    }
+    
+}

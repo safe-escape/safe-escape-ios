@@ -10,6 +10,9 @@ import SwiftUI
 // 주소 검색 뷰
 struct InputAddressView: View {
     @ObservedObject var viewModel: InputAddressViewModel
+    var type: InputAddressViewType = .shadow
+    var radius: CGFloat = 15
+    var height: CGFloat = 56
     
     @FocusState var inputAddressFocused: Bool
     
@@ -64,16 +67,21 @@ struct InputAddressView: View {
         }
         .padding(.leading, 20)
         .padding(.trailing, 8)
-        .frame(height: 56)
+        .frame(height: height)
         .background(
-            RoundedRectangle(cornerRadius: 15)
+            RoundedRectangle(cornerRadius: radius)
                 .fill(.white)
-                .shadow(color: .black.opacity(0.16), radius: 5, x: 0, y: 2)
+                .shadow(color: .black.opacity(type == .shadow ? 0.16 : 0), radius: 5, x: 0, y: 2)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: radius)
+                .stroke(.borderD7D7D7, lineWidth: 1)
+                .opacity(type == .border ? 1 : 0)
         )
         .overlay(alignment: .top) {
             // 주소 리스트
             VStack(spacing: 6) {
-                Spacer(minLength: 56)
+                Spacer(minLength: height)
                 
                 ScrollView {
                     VStack {
@@ -141,8 +149,6 @@ struct InputAddressView: View {
             .opacity(viewModel.showAddressList ? 1 : 0)
             .animation(.easeIn(duration: 0.1), value: viewModel.showAddressList)
         }
-        .padding(.top, 14)
-        .padding(.horizontal, 8)
-        .zIndex(2)
+        .zIndex(10)
     }
 }

@@ -16,9 +16,12 @@ struct MainView: View {
             TabView(selection: $navigationViewModel.page) {
                 ForEach(viewModel.tabs, id: \.page) { tab in
                     // TODO: 페이지 생성 시 추가 필요
-                    if tab.page == .home {
+                    switch tab.page {
+                    case .home:
                         HomeView()
-                    } else {
+                    case .crowded:
+                        CrowdedView()
+                    default:
                         VStack {
                             Spacer()
                         }

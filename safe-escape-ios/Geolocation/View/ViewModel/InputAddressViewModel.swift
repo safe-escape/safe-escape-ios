@@ -7,6 +7,12 @@
 
 import Foundation
 
+// 주소 검색 뷰 타입
+enum InputAddressViewType {
+    case shadow // background + shadow
+    case border // background + border
+}
+
 // 주소 검색 에러
 enum InputAddressError {
     case validateFailed // validation 실패한 경우

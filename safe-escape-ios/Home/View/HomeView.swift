@@ -110,7 +110,10 @@ struct HomeView: View {
         }
         .onAppear {
             NSLog("onAppear")
-            viewModel.requestMapData()
+            let data = navigationViewModel.data as? Shelter
+            viewModel.requestMapData(data)
+            
+            navigationViewModel.data = nil
         }
     }
 }

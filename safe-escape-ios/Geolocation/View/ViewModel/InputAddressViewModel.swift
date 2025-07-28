@@ -64,6 +64,11 @@ class InputAddressViewModel: ObservableObject {
             return
         }
         
+        // input과 선택한 도로명 주소가 동일하면 return
+        guard textInputAddress != selectedAddress?.road else {
+            return
+        }
+        
         // 주소 리스트
         addressList = []
         

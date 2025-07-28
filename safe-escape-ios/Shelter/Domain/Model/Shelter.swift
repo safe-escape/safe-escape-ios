@@ -8,7 +8,7 @@
 import Foundation
 
 // 대피소
-struct Shelter {
+struct Shelter: Identifiable {
     var id: String // ID
     var name: String // 이름
     var address: String // 주소

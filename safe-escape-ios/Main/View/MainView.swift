@@ -21,6 +21,8 @@ struct MainView: View {
                         HomeView()
                     case .crowded:
                         CrowdedView()
+                    case .shelter:
+                        ShelterView()
                     default:
                         VStack {
                             Spacer()

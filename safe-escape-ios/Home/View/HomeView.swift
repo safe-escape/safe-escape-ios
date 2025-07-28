@@ -21,6 +21,8 @@ struct HomeView: View {
             VStack(spacing: 0) {
                 // 주소 검색창
                 InputAddressView(viewModel: viewModel.inputAddressViewModel)
+                    .padding(.top, 14)
+                    .padding(.horizontal, 8)
                 
                 // 혼잡한 지역 표시
                 HStack(alignment: .top, spacing: 0) {
@@ -82,12 +84,12 @@ struct HomeView: View {
                             .frame(width: 12)
                             .rotationEffect(.degrees(30))
                     }
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(Color.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 5)
                     .background(
                         RoundedRectangle(cornerRadius: 20)
-                            .foregroundStyle(Color.white)
+                            .foregroundStyle(Color.accent.opacity(0.7))
                             .shadow(color: .black.opacity(0.25), radius: 5, y: 3)
                     )
                     .contentShape(Rectangle())

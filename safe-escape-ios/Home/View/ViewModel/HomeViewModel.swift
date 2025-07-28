@@ -92,8 +92,8 @@ class HomeViewModel: ObservableObject {
         
         // 주소 검색 뷰모델 -> 주소 검색 후 선택 시, 지도 해당 주소 좌표로 이동
         inputAddressViewModel.$selectedAddress
-            .sink { address in
-                guard let address = address else {
+            .sink { [weak self] address in
+                guard let address = address, let self = self else {
                     return
                 }
                 
@@ -104,18 +104,18 @@ class HomeViewModel: ObservableObject {
         
         // 지도 뷰모델 -> 선택한 대피소 유무에 따라 대피소 오버레이 노출 여부 설정
         mapViewModel.$selectedShelter
-            .sink { shelter in
+            .sink { [weak self] shelter in
                 if let shelter = shelter {
-                    self.shelterInfoViewModel.shelter = shelter
+                    self?.shelterInfoViewModel.shelter = shelter
                 }
-                self.showShelterInfo = shelter != nil
+                self?.showShelterInfo = shelter != nil
             }
             .store(in: &cancellables)
         
         // 지도 뷰모델 -> Refresh 버튼 노출 여부에 따라 Refresh 버튼 노출 여부 설정
         mapViewModel.$showRefreshButton
-            .sink { show in
-                self.showRefreshButton = show
+            .sink { [weak self] show in
+                self?.showRefreshButton = show
             }
             .store(in: &cancellables)
     }

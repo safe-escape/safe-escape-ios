@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B41DD8A42E2769D000BC1FE2 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = B41DD8A32E2769D000BC1FE2 /* Moya */; };
 		B41DD8A72E276A7800BC1FE2 /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = B41DD8A62E276A7800BC1FE2 /* NMapsMap */; };
+		B49E8FC02E37171D00D80AF9 /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = B49E8FBF2E37171D00D80AF9 /* SkeletonUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B41DD8A42E2769D000BC1FE2 /* Moya in Frameworks */,
+				B49E8FC02E37171D00D80AF9 /* SkeletonUI in Frameworks */,
 				B41DD8A72E276A7800BC1FE2 /* NMapsMap in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				B41DD8A32E2769D000BC1FE2 /* Moya */,
 				B41DD8A62E276A7800BC1FE2 /* NMapsMap */,
+				B49E8FBF2E37171D00D80AF9 /* SkeletonUI */,
 			);
 			productName = "safe-escape-ios";
 			productReference = B4D318422E2629E500FEAD5E /* safe-escape-ios.app */;
@@ -119,6 +122,7 @@
 			packageReferences = (
 				B41DD8A22E2769D000BC1FE2 /* XCRemoteSwiftPackageReference "Moya" */,
 				B41DD8A52E276A7800BC1FE2 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
+				B49E8FBE2E37171D00D80AF9 /* XCRemoteSwiftPackageReference "SkeletonUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B4D318432E2629E500FEAD5E /* Products */;
@@ -390,6 +394,14 @@
 				minimumVersion = 3.22.0;
 			};
 		};
+		B49E8FBE2E37171D00D80AF9 /* XCRemoteSwiftPackageReference "SkeletonUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CSolanaM/SkeletonUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -402,6 +414,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B41DD8A52E276A7800BC1FE2 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
 			productName = NMapsMap;
+		};
+		B49E8FBF2E37171D00D80AF9 /* SkeletonUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B49E8FBE2E37171D00D80AF9 /* XCRemoteSwiftPackageReference "SkeletonUI" */;
+			productName = SkeletonUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

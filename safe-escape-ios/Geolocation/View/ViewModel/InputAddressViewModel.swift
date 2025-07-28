@@ -7,6 +7,18 @@
 
 import Foundation
 
+enum InputFocusState {
+    case none
+    case focusIn
+    case focusOut
+}
+
+// 주소 검색 뷰 타입
+enum InputAddressViewType {
+    case shadow // background + shadow
+    case border // background + border
+}
+
 // 주소 검색 에러
 enum InputAddressError {
     case validateFailed // validation 실패한 경우
@@ -18,16 +30,19 @@ class InputAddressViewModel: ObservableObject {
     // input
     @Published var textInputAddress: String = ""
     
+    // 포커스 요청
+    @Published var focusRequest: InputFocusState = .none
+    
     // 주소 리스트 및 노출 여부
-    @Published var showAddressList: Bool = false
+    @Published var showOverlay: Bool = false
     @Published var addressList: [Address] = []
     
     // 검색 에러
     @Published var errorState: InputAddressError? = nil
     
-    //
+    // 주소 검색 loading 여부
     @Published var loading: Bool = false
-    
+    // 선택한 주소
     @Published var selectedAddress: Address? = nil
     
     // 마지막으로 검색한 주소
@@ -40,7 +55,12 @@ class InputAddressViewModel: ObservableObject {
         
         // 마지막 검색한 주소와 input이 동일하고 해당 주소 리스트가 있는 경우, 주소 리스트 다시 노출
         guard textInputAddress != lastFindAddress || addressList.isEmpty else {
-            self.showAddressList = true
+            self.showOverlay = true
+            return
+        }
+        
+        // input과 선택한 도로명 주소가 동일하면 return
+        guard textInputAddress != selectedAddress?.road else {
             return
         }
         
@@ -50,6 +70,7 @@ class InputAddressViewModel: ObservableObject {
         // input 한자리 이하면 다시 입력하도록 변경
         if textInputAddress.count < 2 {
             self.errorState = .validateFailed
+            self.showOverlay = true
             return
         }
         
@@ -64,6 +85,7 @@ class InputAddressViewModel: ObservableObject {
                 await MainActor.run {
                     self.loading = false
                     self.errorState = .noData
+                    self.showOverlay = true
                 }
                 return
             }
@@ -72,7 +94,7 @@ class InputAddressViewModel: ObservableObject {
             await MainActor.run {
                 self.loading = false
                 self.addressList = addressList
-                self.showAddressList = true
+                self.showOverlay = true
             }
         }
     }
@@ -84,7 +106,18 @@ class InputAddressViewModel: ObservableObject {
         
         selectedAddress = address
         
-        showAddressList = false
+        showOverlay = false
+        addressList = []
+    }
+    
+    // 초기화
+    func reset() {
+        lastFindAddress = ""
+        textInputAddress = ""
+        
+        errorState = nil
+        selectedAddress = nil
+        showOverlay = false
         addressList = []
     }
 }

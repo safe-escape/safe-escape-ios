@@ -11,6 +11,7 @@ import SwiftUI
 struct SafeEscapeApp: App {
     @State var showIntro: Bool = true
     @StateObject var navigationViewModel: NavigationViewModel = .init()
+    @StateObject var keyboardManager: KeyboardManager = .init()
     
     var body: some Scene {
         WindowGroup {
@@ -19,6 +20,7 @@ struct SafeEscapeApp: App {
             } else {
                 MainView()
                     .environmentObject(navigationViewModel)
+                    .environmentObject(keyboardManager)
             }
         }
     }

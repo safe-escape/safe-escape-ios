@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// 공통 헤더 뷰
 struct HeaderView: View {
     var body: some View {
         HStack(spacing: 5) {

@@ -26,12 +26,12 @@ struct InputAddressView: View {
             .font(.notosans(type: .medium, size: 16))
             .keyboardType(.default)
             .onChange(of: inputAddressFocused) { focused in
-                guard focused else {
+                guard focused, viewModel.errorState == nil else {
                     return
                 }
                 
                 // Input 포커스 된 경우, 주소 리스트 닫기
-                viewModel.showAddressList = false
+                viewModel.showOverlay = false
             }
             .onChange(of: viewModel.errorState) { state in
                 guard state != nil else {
@@ -40,6 +40,12 @@ struct InputAddressView: View {
                 
                 // 에러 있는 경우, 다시 입력하도록 포커스 처리
                 inputAddressFocused = true
+                
+                // 1.5초 후 에러 문구 닫도록 처리
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    self.viewModel.showOverlay = false
+                    self.viewModel.errorState = nil
+                }
             }
             .onChange(of: viewModel.focusRequest) { req in
                 guard req != .none else {
@@ -65,8 +71,8 @@ struct InputAddressView: View {
                     .onTapGesture {
                         inputAddressFocused = false
                         
-                        guard !viewModel.showAddressList else {
-                            viewModel.showAddressList = false
+                        guard !viewModel.showOverlay else {
+                            viewModel.showOverlay = false
                             return
                         }
                         
@@ -88,59 +94,76 @@ struct InputAddressView: View {
                 .opacity(type == .border ? 1 : 0)
         )
         .overlay(alignment: .top) {
-            // 주소 리스트
+            // 주소 리스트 / 에러 문구
             VStack(spacing: 6) {
                 Spacer(minLength: height)
                 
                 ScrollView {
                     VStack {
-                        ForEach(viewModel.addressList, id: \.road) { address in
-                            VStack(spacing: 4) {
-                                HStack {
-                                    Text("도로명")
-                                        .font(.notosans(type: .regular, size: 10))
-                                        .foregroundStyle(Color.accentColor)
-                                        .frame(width: 40)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 3)
-                                                .fill(Color.accentColor.opacity(0.1))
-                                        )
-                                    
-                                    Text(address.road)
-                                        .font(.notosans(type: .medium, size: 13))
-                                        .multilineTextAlignment(.leading)
-                                    
-                                    Spacer(minLength: 0)
-                                }
+                        // 에러 있는 경우, 에러 문구 표시
+                        if let errorState = viewModel.errorState {
+                            VStack {
+                                Image(systemName: "exclamationmark.circle")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 24)
+                                    .foregroundStyle(Color.gray)
                                 
-                                // 지번 주소 있는 경우에만 노출
-                                if let jibun = address.jibun, !jibun.isEmpty {
+                                Text(errorState == .validateFailed ? "주소는 두 글자 이상 입력해주세요" : "해당하는 주소가 없습니다\n주소를 다시 입력해주세요")
+                                    .font(.notosans(type: .medium, size: 15))
+                                    .foregroundStyle(Color.gray)
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .padding(.vertical, 10)
+                        } else { // 그 외, 주소 리스트 노출
+                            ForEach(viewModel.addressList, id: \.road) { address in
+                                VStack(spacing: 4) {
                                     HStack {
-                                        Text("지번")
+                                        Text("도로명")
                                             .font(.notosans(type: .regular, size: 10))
-                                            .foregroundStyle(Color.init(hex: "#ffaa00")!)
+                                            .foregroundStyle(Color.accentColor)
                                             .frame(width: 40)
                                             .background(
                                                 RoundedRectangle(cornerRadius: 3)
-                                                    .fill(Color.yellow.opacity(0.15))
+                                                    .fill(Color.accentColor.opacity(0.1))
                                             )
                                         
-                                        Text(jibun)
-                                            .font(.notosans(type: .regular, size: 11.5))
-                                            .foregroundStyle(Color.font898989)
+                                        Text(address.road)
+                                            .font(.notosans(type: .medium, size: 13))
                                             .multilineTextAlignment(.leading)
                                         
                                         Spacer(minLength: 0)
                                     }
+                                    
+                                    // 지번 주소 있는 경우에만 노출
+                                    if let jibun = address.jibun, !jibun.isEmpty {
+                                        HStack {
+                                            Text("지번")
+                                                .font(.notosans(type: .regular, size: 10))
+                                                .foregroundStyle(Color.init(hex: "#ffaa00")!)
+                                                .frame(width: 40)
+                                                .background(
+                                                    RoundedRectangle(cornerRadius: 3)
+                                                        .fill(Color.yellow.opacity(0.15))
+                                                )
+                                            
+                                            Text(jibun)
+                                                .font(.notosans(type: .regular, size: 11.5))
+                                                .foregroundStyle(Color.font898989)
+                                                .multilineTextAlignment(.leading)
+                                            
+                                            Spacer(minLength: 0)
+                                        }
+                                    }
                                 }
-                            }
-                            .padding(.horizontal)
-                            .padding(.vertical, 8)
-                            .padding(.top, -2)
-                            .background(Color.white)
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                viewModel.selectAddress(address)
+                                .padding(.horizontal)
+                                .padding(.vertical, 8)
+                                .padding(.top, -2)
+                                .background(Color.white)
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    viewModel.selectAddress(address)
+                                }
                             }
                         }
                     }
@@ -151,12 +174,12 @@ struct InputAddressView: View {
                         .fill(.white)
                         .shadow(color: .black.opacity(0.16), radius: 5, x: 0, y: 2)
                 )
-                .frame(maxHeight: viewModel.showAddressList ? maxHeight * 0.3 : 0)
-                .animation(.interpolatingSpring(mass: 0.1, stiffness: 170, damping: 10), value: viewModel.showAddressList)
+                .frame(maxHeight: viewModel.showOverlay ? maxHeight * 0.3 : 0)
+                .animation(.interpolatingSpring(mass: 0.1, stiffness: 170, damping: 10), value: viewModel.showOverlay)
             }
             .fixedSize(horizontal: false, vertical: true)
-            .opacity(viewModel.showAddressList ? 1 : 0)
-            .animation(.easeIn(duration: 0.1), value: viewModel.showAddressList)
+            .opacity(viewModel.showOverlay ? 1 : 0)
+            .animation(.easeIn(duration: 0.1), value: viewModel.showOverlay)
         }
         .zIndex(10)
     }

@@ -57,10 +57,11 @@ public enum TimeFormatter {
     
 }
 
+// 주어 - 은/는 조사 Formatter
 public enum TopicFormatter {
-    
-    public static func appendTopicMarker(_ word: String) -> String {
-        guard let lastChar = word.last else { return word }
+    // 주어 받침 여부에 따라 은/는 조사 return
+    public static func getTopicMarker(_ word: String) -> String {
+        guard let lastChar = word.trimmingCharacters(in: .whitespacesAndNewlines).last else { return word }
 
         let scalar = lastChar.unicodeScalars.first!.value
 
@@ -72,7 +73,7 @@ public enum TopicFormatter {
         let hasFinalConsonant = (lastCharIndex % 28) != 0
 
         let marker = hasFinalConsonant ? "은" : "는"
-        return word + marker
+        return marker
     }
     
 }

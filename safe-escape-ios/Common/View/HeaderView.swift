@@ -9,6 +9,8 @@ import SwiftUI
 
 // 공통 헤더 뷰
 struct HeaderView: View {
+    var backgroundColor: Color = .backgroundF7F7F7
+    
     var body: some View {
         HStack(spacing: 5) {
             Image(.logo)
@@ -23,7 +25,7 @@ struct HeaderView: View {
         }
         .padding(.leading, 20)
         .frame(height: 60)
-        .background(.backgroundF7F7F7)
+        .background(backgroundColor)
     }
 }
 

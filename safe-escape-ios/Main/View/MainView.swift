@@ -19,19 +19,25 @@ struct MainView: View {
                     switch tab.page {
                     case .home:
                         HomeView()
+                            .tag(tab.page)
                     case .crowded:
                         CrowdedView()
+                            .tag(tab.page)
                     case .shelter:
                         ShelterView()
+                            .tag(tab.page)
+                    case .mypage:
+                        AccountView()
+                            .tag(tab.page)
                     default:
                         VStack {
                             Spacer()
                         }
+                        .tag(tab.page)
                     }
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            .padding(.bottom, 50)
+            .tabViewStyle(.automatic)
             .overlay(alignment: .bottom) {
                 // 탭바
                 TabBarView(currentPage: $navigationViewModel.page, tabs: viewModel.tabs)

@@ -8,15 +8,71 @@
 import Foundation
 import CoreLocation
 
-class LocationUsecase {
+class LocationUsecase: NSObject {
     static let shared = LocationUsecase()
     
-    private init() {}
+    private var locationManager: CLLocationManager!
+    private var continuation: CheckedContinuation<Coordinate, Error>?
+    
+    // 캐시된 위치 정보
+    private var cachedLocation: Coordinate?
+    private var cacheTimestamp: Date?
+    private let cacheValidityDuration: TimeInterval = 180 // 3분
+    
+    override private init() {
+        super.init()
+        DispatchQueue.main.async {
+            self.setupLocationManager()
+        }
+    }
+    
+    private func setupLocationManager() {
+        self.locationManager = CLLocationManager()
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.locationManager.distanceFilter = kCLDistanceFilterNone
+    }
     
     // 사용자 현재 위치
     func getCurrentLocation() async throws -> Coordinate {
-        // TODO: 사용자 위치 받아오는 것으로 변경 필요
-        return Coordinate(latitude: 37.524771, longitude: 126.886062)
+        // 캐시된 위치가 유효한지 확인
+        if let cachedLocation = cachedLocation,
+           let cacheTimestamp = cacheTimestamp,
+           Date().timeIntervalSince(cacheTimestamp) < cacheValidityDuration {
+            return cachedLocation
+        }
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.main.async {
+                // 이미 요청이 진행 중인지 확인
+                guard self.continuation == nil else {
+                    continuation.resume(throwing: LocationError.requestInProgress)
+                    return
+                }
+                
+                self.continuation = continuation
+                
+                let status = self.locationManager.authorizationStatus
+                
+                switch status {
+                case .notDetermined:
+                    self.locationManager.requestWhenInUseAuthorization()
+                case .denied, .restricted:
+                    self.continuation = nil
+                    continuation.resume(throwing: LocationError.permissionDenied)
+                case .authorizedWhenInUse, .authorizedAlways:
+                    if CLLocationManager.locationServicesEnabled() {
+                        self.locationManager.requestLocation()
+                    } else {
+                        self.continuation = nil
+                        continuation.resume(throwing: LocationError.locationServicesDisabled)
+                    }
+                @unknown default:
+                    self.continuation = nil
+                    continuation.resume(throwing: LocationError.unknown)
+                }
+            }
+        }
     }
     
     // 두 좌표간 직선 거리 계산
@@ -64,5 +120,83 @@ class LocationUsecase {
         return (p2.longitude - p1.longitude) * (point.latitude - p1.latitude)
              - (point.longitude - p1.longitude) * (p2.latitude - p1.latitude)
     }
-
 }
+
+// MARK: - CLLocationManagerDelegate
+extension LocationUsecase: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.first else {
+            continuation?.resume(throwing: LocationError.locationNotFound)
+            continuation = nil
+            return
+        }
+        
+        let coordinate = Coordinate(
+            latitude: location.coordinate.latitude,
+            longitude: location.coordinate.longitude
+        )
+        
+        // 위치 정보 캐시 저장
+        cachedLocation = coordinate
+        cacheTimestamp = Date()
+        
+        continuation?.resume(returning: coordinate)
+        continuation = nil
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        continuation?.resume(throwing: LocationError.locationFailed(error))
+        continuation = nil
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        guard let continuation = continuation else { return }
+        
+        switch status {
+        case .authorizedWhenInUse, .authorizedAlways:
+            if CLLocationManager.locationServicesEnabled() {
+                manager.requestLocation()
+            } else {
+                continuation.resume(throwing: LocationError.locationServicesDisabled)
+                self.continuation = nil
+            }
+        case .denied, .restricted:
+            continuation.resume(throwing: LocationError.permissionDenied)
+            self.continuation = nil
+        case .notDetermined:
+            // 계속 대기
+            break
+        @unknown default:
+            continuation.resume(throwing: LocationError.unknown)
+            self.continuation = nil
+        }
+    }
+}
+
+// MARK: - LocationError
+enum LocationError: Error, LocalizedError {
+    case permissionDenied
+    case locationServicesDisabled
+    case locationNotFound
+    case locationFailed(Error)
+    case requestInProgress
+    case unknown
+    
+    var errorDescription: String? {
+        switch self {
+        case .permissionDenied:
+            return "위치 접근 권한이 거부되었습니다."
+        case .locationServicesDisabled:
+            return "위치 서비스가 비활성화되어 있습니다."
+        case .locationNotFound:
+            return "현재 위치를 찾을 수 없습니다."
+        case .locationFailed(let error):
+            return "위치 조회 실패: \(error.localizedDescription)"
+        case .requestInProgress:
+            return "이미 위치 요청이 진행 중입니다."
+        case .unknown:
+            return "알 수 없는 위치 오류가 발생했습니다."
+        }
+    }
+}
+

@@ -56,7 +56,7 @@ struct CrowdedNearByListView: View {
                                       animation: .pulse(),
                                       appearance: appearance,
                                       shape: .rounded(.radius(8)))
-                            .padding(.top, viewModel.nearByLoading ? -2 : 0)
+                            .padding(.top, viewModel.nearByLoading ? -2 : 6)
                         
                         VStack(alignment: .leading, spacing: 4) {
                             Text(data?.address)
@@ -75,9 +75,9 @@ struct CrowdedNearByListView: View {
                                           appearance: appearance,
                                           scales: [0: 0.9])
                                 .padding(.top, 2)
-                                .padding(.bottom, 10)
+                                .padding(.bottom, viewModel.nearByLoading ? 10 : 4)
                         }
-                        .padding(.top, -8)
+                        .padding(.top, viewModel.nearByLoading ? -8 : -2)
                         
                         Spacer(minLength: 0)
                     }

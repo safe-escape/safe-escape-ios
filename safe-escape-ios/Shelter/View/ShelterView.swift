@@ -56,7 +56,7 @@ struct ShelterView: View {
                         .padding(.top, viewModel.loading ? 7 : 0)
                         .padding(.bottom, viewModel.loading ? 3 : 0)
                             
-                        SkeletonForEach(with: viewModel.shelters, quantity: viewModel.loading ? 3 : viewModel.shelters.count) { _, shelter in
+                        SkeletonForEach(with: viewModel.shelters, quantity: viewModel.loading ? 5 : viewModel.shelters.count) { _, shelter in
                             HStack(alignment: .top) {
                                 VStack(spacing: 2) {
                                     Image(.shelterMarker)

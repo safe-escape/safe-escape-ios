@@ -11,10 +11,9 @@ class ShelterViewModel: ObservableObject {
     
     @Published var loading: Bool = false
     @Published var shelters: [Shelter] = []
-    
-    @Published var nearByList: [CrowdedNearBy] = []
   
     func requestData() {
+        shelters = []
         loading = true
         
         Task {

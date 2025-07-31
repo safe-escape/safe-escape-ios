@@ -34,7 +34,7 @@ class HomeViewModel: ObservableObject {
     @Published var showRefreshButton: Bool = false
     
     // 홈 지도 데이터 조회
-    func requestMapData() {
+    func requestMapData(_ shelter: Shelter? = nil) {
         // 데이터 초기화
         mapViewModel.clearMap()
         mapViewModel.showRefreshButton = false
@@ -73,7 +73,7 @@ class HomeViewModel: ObservableObject {
             await MainActor.run {
                 // 지도 뷰모델에 마지막 검색한 위치 저장 및 데이터 셋팅
                 self.mapViewModel.lastFindCenterPosition = location
-                self.mapViewModel.setMapData(mapData)
+                self.mapViewModel.setMapData(mapData, shelter)
                 
                 // 비상구 데이터 셋팅 및 노출 여부
                 self.exitInfoViewModel.exits = mapData.exits

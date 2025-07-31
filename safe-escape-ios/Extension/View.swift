@@ -28,7 +28,7 @@ extension View {
     }
 
     var maxHeight: CGFloat {
-        UIScreen.main.bounds.height - safeAreaTop - safeAreaBottom
+        UIScreen.main.bounds.height - safeAreaTop - safeAreaBottom - 50
     }
     
 }

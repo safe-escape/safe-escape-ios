@@ -54,7 +54,9 @@ class MapViewModel: NSObject, ObservableObject {
     private let defaultMarkerZIndex = 200000
     
     // 지도 UI(마커 및 오버레이) 생성
-    func setMapData(_ data: SafetyMapData) {
+    func setMapData(_ data: SafetyMapData, _ selectedShelter: Shelter? = nil) {
+        var selectedShelterMarker: NMFMarker?
+        
         // 대피소 마커
         shelters = data.shelters.map { shelter in
             let marker = NMFMarker(position: NMGLatLng(lat: shelter.coordinate.latitude, lng: shelter.coordinate.longitude), iconImage: shelterMarkerImage)
@@ -79,6 +81,10 @@ class MapViewModel: NSObject, ObservableObject {
                     }
                 }
                 return true
+            }
+            
+            if shelter.id == selectedShelter?.id {
+                selectedShelterMarker = marker
             }
             
             return marker
@@ -126,6 +132,12 @@ class MapViewModel: NSObject, ObservableObject {
         
         // 지도 UI 갱신 요청
         needUpdateMapOverlay = true
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            if let marker = selectedShelterMarker {
+                marker.touchHandler?(marker)
+            }
+        }
     }
     
     // 지도 UI 제거

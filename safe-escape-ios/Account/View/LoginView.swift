@@ -91,10 +91,7 @@ enum Field {
 }
 
 struct LoginView: View {
-
-    // MARK: - States
-    @State private var email: String = ""
-    @State private var password: String = ""
+    @ObservedObject var viewModel: AccountViewModel
     @FocusState private var focusedField: Field?
 
     var body: some View {
@@ -106,28 +103,38 @@ struct LoginView: View {
             
             VStack(spacing: 24) {
                 // 이메일
-                AccountTextField(label: "이메일", placeHolder: "이메일을 입력하세요", text: $email, textContentType: .emailAddress, keyboardType: .emailAddress, focusedField: _focusedField, fieldType: .email) {
+                AccountTextField(label: "이메일", placeHolder: "이메일을 입력하세요", text: $viewModel.loginEmail, textContentType: .emailAddress, keyboardType: .emailAddress, focusedField: _focusedField, fieldType: .email) {
                     focusedField = .password
                 }
                 
                 // 패스워드
-                AccountSecureField(label: "비밀번호", placeHolder: "비밀번호를 입력하세요", text: $password, focusedField: _focusedField, fieldType: .password) {
-                    login()
+                AccountSecureField(label: "비밀번호", placeHolder: "비밀번호를 입력하세요", text: $viewModel.loginPassword, focusedField: _focusedField, fieldType: .password) {
+                    Task { await login() }
+                }
+                
+                // Error Message
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .font(.notosans(type: .regular, size: 12))
+                        .foregroundColor(.red)
+                        .padding(.horizontal, 16)
+                        .multilineTextAlignment(.center)
                 }
             
                 // Login Button
                 Button("로그인") {
-                    login()
+                    Task { await login() }
                 }
                 .font(.notosans(type: .regular, size: 13))
                 .foregroundColor(.white)
                 .padding(.vertical, 12)
                 .frame(maxWidth: .infinity)
-                .background(Color.accent)
+                .background(viewModel.isLoading ? Color.gray : Color.accent)
                 .cornerRadius(8)
+                .disabled(viewModel.isLoading)
                 
                 Button {
-                    
+                    viewModel.showSignUpView()
                 } label: {
                     Text("회원가입하기")
                         .font(.notosans(type: .regular, size: 13))
@@ -148,10 +155,9 @@ struct LoginView: View {
     }
 
     // MARK: - Login Logic
-    private func login() {
-        // 여기에 로그인 처리 로직을 추가
-        print("이메일: \(email), 비밀번호: \(password)")
+    private func login() async {
         hideKeyboard()
+        await viewModel.login()
     }
 }
 
@@ -166,5 +172,7 @@ extension View {
 #endif
 
 #Preview {
-    LoginView()
+    let viewModel = AccountViewModel()
+    viewModel.setAuthManager(AuthenticationManager())
+    return LoginView(viewModel: viewModel)
 }

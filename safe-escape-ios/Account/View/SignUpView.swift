@@ -8,10 +8,7 @@
 import SwiftUI
 
 struct SignUpView: View {
-
-    // MARK: - States
-    @State private var email: String = ""
-    @State private var password: String = ""
+    @ObservedObject var viewModel: AccountViewModel
     @FocusState private var focusedField: Field?
 
     var body: some View {
@@ -22,37 +19,47 @@ struct SignUpView: View {
                 .frame(width: 101)
             
             VStack(spacing: 24) {
+                // 이름
+                AccountTextField(label: "이름", placeHolder: "이름을 입력하세요", text: $viewModel.signUpName, textContentType: .name, focusedField: _focusedField, fieldType: .name) {
+                    focusedField = .email
+                }
+                
                 // 이메일
-                AccountTextField(label: "이메일", placeHolder: "이메일을 입력하세요", text: $email, textContentType: .emailAddress, keyboardType: .emailAddress, focusedField: _focusedField, fieldType: .email) {
+                AccountTextField(label: "이메일", placeHolder: "이메일을 입력하세요", text: $viewModel.signUpEmail, textContentType: .emailAddress, keyboardType: .emailAddress, focusedField: _focusedField, fieldType: .email) {
                     focusedField = .password
                 }
                 
                 // 패스워드
-                AccountSecureField(label: "비밀번호", placeHolder: "비밀번호를 입력하세요", text: $password, focusedField: _focusedField, fieldType: .password) {
-                    login()
+                AccountSecureField(label: "비밀번호", placeHolder: "비밀번호를 입력하세요", text: $viewModel.signUpPassword, focusedField: _focusedField, fieldType: .password) {
+                    focusedField = .confirmPassword
+                }
+                
+                // 패스워드 확인
+                AccountSecureField(label: "비밀번호 확인", placeHolder: "비밀번호를 다시 입력하세요", text: $viewModel.signUpConfirmPassword, focusedField: _focusedField, fieldType: .confirmPassword, submitLabel: .done) {
+                    Task { await signUp() }
+                }
+                
+                // Error Message
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .font(.notosans(type: .regular, size: 12))
+                        .foregroundColor(.red)
+                        .padding(.horizontal, 16)
+                        .multilineTextAlignment(.center)
                 }
             
-                // Login Button
-                Button("로그인") {
-                    login()
+                // SignUp Button
+                Button("회원가입") {
+                    Task { await signUp() }
                 }
                 .font(.notosans(type: .regular, size: 13))
                 .foregroundColor(.white)
                 .padding(.vertical, 12)
                 .frame(maxWidth: .infinity)
-                .background(Color.accent)
+                .background(viewModel.isLoading ? Color.gray : Color.accent)
                 .cornerRadius(8)
+                .disabled(viewModel.isLoading)
                 
-                Button {
-                    
-                } label: {
-                    Text("회원가입하기")
-                        .font(.notosans(type: .regular, size: 13))
-                        .underline()
-                        .foregroundStyle(Color.font1E1E1E)
-                        .padding(.top, -2)
-                        .padding(.bottom, 2)
-                }
 
             }
             .padding(24)
@@ -62,16 +69,18 @@ struct SignUpView: View {
             )
         }
         .padding(.horizontal, 28)
+        .navigationBarBackButtonHidden(true)
     }
 
-    // MARK: - Login Logic
-    private func login() {
-        // 여기에 로그인 처리 로직을 추가
-        print("이메일: \(email), 비밀번호: \(password)")
+    // MARK: - SignUp Logic
+    private func signUp() async {
         hideKeyboard()
+        await viewModel.signUp()
     }
 }
 
 #Preview {
-    SignUpView()
+    let viewModel = AccountViewModel()
+    viewModel.setAuthManager(AuthenticationManager())
+    return SignUpView(viewModel: viewModel)
 }

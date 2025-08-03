@@ -95,7 +95,7 @@ struct LoginView: View {
     @FocusState private var focusedField: Field?
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 70) {
             Image(.logo)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -116,21 +116,32 @@ struct LoginView: View {
                 if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
                         .font(.notosans(type: .regular, size: 12))
-                        .foregroundColor(.red)
+                        .foregroundColor(.pointRed)
                         .padding(.horizontal, 16)
                         .multilineTextAlignment(.center)
+                        .padding(.top, -10)
+                        .padding(.bottom, -5)
                 }
             
                 // Login Button
-                Button("로그인") {
+                Button {
                     Task { await login() }
+                } label: {
+                    HStack {
+                        Spacer()
+                        
+                        Text("로그인")
+                        
+                        Spacer()
+                    }
+                    .font(.notosans(type: .regular, size: 13))
+                    .foregroundColor(.white)
+                    .padding(.vertical, 12)
+                    .contentShape(Rectangle())
+                    .background(viewModel.isLoading ? Color.dimC5D6Ca : Color.accent)
+                    .cornerRadius(8)
                 }
-                .font(.notosans(type: .regular, size: 13))
-                .foregroundColor(.white)
-                .padding(.vertical, 12)
-                .frame(maxWidth: .infinity)
-                .background(viewModel.isLoading ? Color.gray : Color.accent)
-                .cornerRadius(8)
+                .buttonStyle(CommonStateButtonStyle())
                 .disabled(viewModel.isLoading)
                 
                 Button {
@@ -150,6 +161,7 @@ struct LoginView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(Color.borderD9D9D9)
             )
+            .padding(.bottom, 90)
         }
         .padding(.horizontal, 28)
     }

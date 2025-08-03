@@ -96,12 +96,12 @@ class AccountViewModel: ObservableObject {
     
     private func validateLoginInput() -> Bool {
         if loginEmail.isEmpty || loginPassword.isEmpty {
-            errorMessage = "이메일과 비밀번호를 입력해주세요."
+            errorMessage = "이메일과 비밀번호를 입력해주세요"
             return false
         }
         
         if !isValidEmail(loginEmail) {
-            errorMessage = "올바른 이메일 형식을 입력해주세요."
+            errorMessage = "올바른 이메일 형식을 입력해주세요"
             return false
         }
         
@@ -110,27 +110,27 @@ class AccountViewModel: ObservableObject {
     
     private func validateSignUpInput() -> Bool {
         if signUpName.isEmpty || signUpEmail.isEmpty || signUpPassword.isEmpty || signUpConfirmPassword.isEmpty {
-            errorMessage = "모든 필드를 입력해주세요."
+            errorMessage = "모든 필드를 입력해주세요"
             return false
         }
         
         if !isValidEmail(signUpEmail) {
-            errorMessage = "올바른 이메일 형식을 입력해주세요."
+            errorMessage = "올바른 이메일 형식을 입력해주세요"
             return false
         }
         
         if signUpPassword != signUpConfirmPassword {
-            errorMessage = "비밀번호가 일치하지 않습니다."
+            errorMessage = "비밀번호가 일치하지 않습니다"
             return false
         }
         
         if signUpPassword.count < 4 {
-            errorMessage = "비밀번호는 4자 이상이어야 합니다."
+            errorMessage = "비밀번호는 4자 이상이어야 합니다"
             return false
         }
         
         if signUpPassword.contains(" ") {
-            errorMessage = "비밀번호에는 공백을 포함할 수 없습니다."
+            errorMessage = "비밀번호에는 공백을 포함할 수 없습니다"
             return false
         }
         

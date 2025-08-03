@@ -46,18 +46,29 @@ struct SignUpView: View {
                         .foregroundColor(.red)
                         .padding(.horizontal, 16)
                         .multilineTextAlignment(.center)
+                        .padding(.top, -10)
+                        .padding(.bottom, -5)
                 }
             
                 // SignUp Button
-                Button("회원가입") {
+                Button {
                     Task { await signUp() }
+                } label: {
+                    HStack {
+                        Spacer()
+                        
+                        Text("회원가입")
+                        
+                        Spacer()
+                    }
+                    .font(.notosans(type: .regular, size: 13))
+                    .foregroundColor(.white)
+                    .padding(.vertical, 12)
+                    .contentShape(Rectangle())
+                    .background(viewModel.isLoading ? Color.dimC5D6Ca : Color.accent)
+                    .cornerRadius(8)
                 }
-                .font(.notosans(type: .regular, size: 13))
-                .foregroundColor(.white)
-                .padding(.vertical, 12)
-                .frame(maxWidth: .infinity)
-                .background(viewModel.isLoading ? Color.gray : Color.accent)
-                .cornerRadius(8)
+                .buttonStyle(CommonStateButtonStyle())
                 .disabled(viewModel.isLoading)
                 
 

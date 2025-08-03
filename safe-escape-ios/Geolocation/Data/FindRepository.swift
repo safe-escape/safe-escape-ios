@@ -43,6 +43,8 @@ class FindRepository {
             geometry.count == 1 ? points.append(contentsOf: geometry) : paths.append(geometry)
         }
         
+        try await Task.sleep(for: .milliseconds(Int.random(in: 1...5) * 100))
+        
         return Route(totalDistance: Double(totalTuple.totalDistance), totalTime: totalTuple.totalTime, points: points, paths: paths)
     }
 }

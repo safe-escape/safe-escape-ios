@@ -38,8 +38,42 @@ class HomeRepository {
             )
         }
         
+        // 실제 서울시 대피소 명칭과 유사한 Mock 데이터
+        let shelterNames = [
+            "강남구민회관 대피소", "서초구 종합운동장", "송파구 체육관", 
+            "광진구 문화센터", "성동구 복합문화센터", "용산구 구민회관",
+            "마포구 체육관", "서대문구 종합체육관", "은평구민회관",
+            "노원구 문화예술회관", "도봉구 체육센터", "강북구민회관",
+            "중랑구 복합문화센터", "동대문구 체육관", "성북구민회관"
+        ]
+        
+        let roadNames = [
+            "테헤란로", "강남대로", "서초대로", "송파대로", "광진로",
+            "성동로", "용산로", "마포대로", "연세로", "은평로",
+            "노원로", "도봉로", "강북로", "종로", "을지로"
+        ]
+        
+        let districts = [
+            "강남구", "서초구", "송파구", "광진구", "성동구",
+            "용산구", "마포구", "서대문구", "은평구", "노원구",
+            "도봉구", "강북구", "중랑구", "동대문구", "성북구"
+        ]
+        
         let shelters = (0..<10).map { _ in
-            var shelter = Shelter(id: String(UUID().uuidString.prefix(8)), name: String(UUID().uuidString.prefix(8)), address: String(UUID().uuidString.prefix(32)), coordinate: randomCoordinate(center: location, radiusInMeters: 1500), liked: Bool.random())
+            let shelterId = String(UUID().uuidString.prefix(8))
+            let shelterName = shelterNames.randomElement() ?? "구민 대피소"
+            let district = districts.randomElement() ?? "강남구"
+            let roadName = roadNames.randomElement() ?? "테헤란로"
+            let buildingNumber = Int.random(in: 1...300)
+            let detailNumber = Int.random(in: 1...99)
+            
+            var shelter = Shelter(
+                id: shelterId,
+                name: shelterName,
+                address: "서울시 \(district) \(roadName) \(buildingNumber)-\(detailNumber)",
+                coordinate: randomCoordinate(center: location, radiusInMeters: 1500),
+                liked: Bool.random()
+            )
             
             shelter.distance = LocationUsecase.shared.getDirectDistance(from: location, to: shelter.coordinate)
             

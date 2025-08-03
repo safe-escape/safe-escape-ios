@@ -107,13 +107,25 @@ struct HomeView: View {
                     ExitMapInfoView(viewModel: viewModel.exitInfoViewModel)
                 }
             }
+            
+            if viewModel.loading {
+                ProgressView()
+                    .tint(.white)
+                    .scaleEffect(1.7)
+                    .padding(25)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(.accent.opacity(0.7))
+                    )
+                    .padding(.bottom, 30)
+            }
         }
         .onAppear {
             NSLog("onAppear")
             let data = navigationViewModel.data as? Shelter
-            viewModel.requestMapData(data)
+            self.viewModel.requestMapData(data)
             
-            navigationViewModel.data = nil
+            self.navigationViewModel.data = nil
         }
     }
 }

@@ -57,72 +57,12 @@ struct ShelterView: View {
                         .padding(.bottom, viewModel.loading ? 3 : 0)
                             
                         SkeletonForEach(with: viewModel.shelters, quantity: viewModel.loading ? 5 : viewModel.shelters.count) { _, shelter in
-                            HStack(alignment: .top) {
-                                VStack(spacing: 2) {
-                                    Image(.shelterMarker)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 34)
-                                    
-                                    Circle()
-                                        .frame(width: 7)
-                                        .foregroundStyle(Color.pointRed)
-                                }
-                                .skeleton(with: viewModel.loading,
-                                          size: CGSize(width: 30, height: 40),
-                                          animation: .pulse(),
-                                          appearance: appearance,
-                                          shape: .rounded(.radius(5)),
-                                          scales: [0: 0.8])
-                                .padding(.leading, viewModel.loading ? 4 : 0)
-                                .padding(.top, viewModel.loading ? 4 : 0)
-                                
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(shelter?.name)
-                                        .font(.notosans(type: .bold, size: 18))
-                                    
-                                    Text(shelter?.address)
-                                        .font(.notosans(type: .regular, size: 11))
-                                        .foregroundStyle(Color.font757575)
-                                }
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.top, -2)
-                                .skeleton(with: viewModel.loading,
-                                          animation: .pulse(),
-                                          appearance: appearance,
-                                          lines: 2,
-                                          scales: [0: 0.7],
-                                          spacing: 11)
-                                .padding(.leading, viewModel.loading ? -2 : 0)
-                                .padding(.top, viewModel.loading ? 5 : 0)
-                                .padding(.bottom, viewModel.loading ? 3 : 0)
-
-                                Text(DistanceFormatter.format(shelter?.distance ?? 0))
-                                    .font(.notosans(type: .semibold, size: 15))
-                                    .padding(.top, 1)
-                                    .skeleton(with: viewModel.loading,
-                                              size: CGSize(width: 40, height: 15),
-                                              animation: .pulse(),
-                                              appearance: appearance)
-                                    .padding(.leading, viewModel.loading ? 2 : 0)
-                                    .padding(.top, viewModel.loading ? 6 : 0)
-                            }
-                            .padding(.vertical, 24)
-                            .padding(.leading, 10)
-                            .padding(.trailing, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(.borderD9D9D9)
-                            )
-                            .contentShape(Rectangle())
-                            .onTapGesture {
+                            ShelterListItemView(shelter: shelter, isLoading: viewModel.loading) {
                                 guard let shelter else {
                                     return
                                 }
                                 navigationViewModel.navigate(.home, shelter)
                             }
-                            .padding(.top, 15)
                         }
                     }
                     

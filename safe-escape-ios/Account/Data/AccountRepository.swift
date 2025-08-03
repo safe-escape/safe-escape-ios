@@ -30,7 +30,7 @@ class AccountRepository {
         // Mock Entity 생성
         let userEntity = UserEntity(
             id: UUID().uuidString,
-            name: "테스트 사용자",
+            name: "사용자",
             email: request.email
         )
         

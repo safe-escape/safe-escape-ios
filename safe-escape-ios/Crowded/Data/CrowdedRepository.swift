@@ -41,8 +41,28 @@ class CrowdedRepository {
         
         try await Task.sleep(for: .seconds(Int.random(in: 0...2)))
         
+        // 실제 서울시 동명
+        let seoulDongs = [
+            "강남동", "역삼동", "논현동", "압구정동", "청담동", "삼성동",
+            "서초동", "반포동", "잠원동", "방배동", "양재동", "우면동",
+            "송파동", "잠실동", "문정동", "가락동", "마천동", "풍납동",
+            "광진동", "구의동", "자양동", "중곡동", "능동구역", "화양동",
+            "성동동", "왕십리동", "마장동", "사근동", "행당동", "응봉동",
+            "용산동", "이촌동", "한남동", "이태원동", "원효동", "청파동",
+            "마포동", "공덕동", "아현동", "도화동", "용강동", "대흥동",
+            "서대문동", "충정로동", "신촌동", "연희동", "홍제동", "홍은동",
+            "은평동", "응암동", "역촌동", "갈현동", "구산동", "대조동"
+        ]
+        
         return (0...Int.random(in: 3...10)).map { _ in
-            CrowdedNearBy(crowded: Crowded(coordinate: randomCoordinate(center: location, radiusInMeters: 500), level: CrowdedLevel.allCases.randomElement() ?? .free), address: String(UUID().uuidString.prefix(8)))
+            let dongName = seoulDongs.randomElement() ?? "강남동"
+            return CrowdedNearBy(
+                crowded: Crowded(
+                    coordinate: randomCoordinate(center: location, radiusInMeters: 500), 
+                    level: CrowdedLevel.allCases.randomElement() ?? .free
+                ), 
+                address: dongName
+            )
         }
     }
     

@@ -9,6 +9,7 @@ import SwiftUI
 
 // 홈 지도 - 대피소 정보 오버레이 뷰
 struct ShelterMapInfoView: View {
+    @EnvironmentObject var authManager: AuthenticationManager
     @ObservedObject var viewModel: ShelterInfoViewModel
     
     // 뷰 표시 여부
@@ -41,13 +42,15 @@ struct ShelterMapInfoView: View {
                         .font(.notosans(type: .semibold, size: 20))
                     
                     // TODO: 회원인 경우에만 보여주도록 변경 및 이름 라인 변경 시 처리
-                    // 찜 버튼
-                    Image(systemName: viewModel.liked ? "heart.fill" : "heart")
-                        .foregroundStyle(viewModel.liked ? Color.pointRed : Color.black)
-                        .onTapGesture {
-                            viewModel.toggleLiked()
-                        }
-                        .padding(.bottom, 5)
+                    if authManager.isLoggedIn {
+                        // 찜 버튼
+                        Image(systemName: viewModel.liked ? "heart.fill" : "heart")
+                            .foregroundStyle(viewModel.liked ? Color.pointRed : Color.black)
+                            .onTapGesture {
+                                viewModel.toggleLiked()
+                            }
+                            .padding(.bottom, 5)
+                    }
                 }
                 
                 // 주소

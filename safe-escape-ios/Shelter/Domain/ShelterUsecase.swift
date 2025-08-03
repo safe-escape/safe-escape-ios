@@ -22,4 +22,12 @@ class ShelterUsecase {
                 return shelter
             }
     }
+    
+    func getFavoriteShelters() async throws -> [Shelter] {
+        return try await ShelterRepository.shared.getFavoriteShelters()
+    }
+    
+    func toggleShelterFavorite(_ shelter: Shelter) async throws {
+        try await ShelterRepository.shared.toggleShelterFavorite(shelter)
+    }
 }

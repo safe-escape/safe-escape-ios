@@ -14,7 +14,7 @@ struct AccountView: View {
     var body: some View {
         NavigationStack {
             if authManager.isLoggedIn {
-                MyPageView(viewModel: viewModel)
+                MyPageView(accountViewModel: viewModel)
             } else {
                 LoginView(viewModel: viewModel)
                     .navigationDestination(isPresented: $viewModel.showSignUp) {

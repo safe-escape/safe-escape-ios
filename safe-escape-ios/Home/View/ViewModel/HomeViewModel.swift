@@ -19,6 +19,8 @@ class HomeViewModel: ObservableObject {
     // 혼잡지역 - 비상구 오버레이 뷰모델
     var exitInfoViewModel: ExitInfoViewModel!
     
+    @Published var loading: Bool = false
+    
     // 대피소 및 비상구 오버레이 노출 여부
     @Published var showExitInfo: Bool = false
     @Published var showShelterInfo: Bool = false {
@@ -42,16 +44,15 @@ class HomeViewModel: ObservableObject {
         exitInfoViewModel.reset()
         showShelterInfo = false
         
+        loading = true
+        
         Task {
             // 검색할 위치 지정 - 지도 현재 위치 좌표 있으면 해당 위치로 / 그 외엔 사용자 현재 위치 기반
             let userLocation = try await LocationUsecase.shared.getCurrentLocation()
             var location: Coordinate! = mapViewModel.currentCenterPosition
-            if location == nil {
+            if location == nil || mapViewModel.lastFindCenterPosition == nil {
                 // 최초 로드이므로 사용자 위치 설정
                 location = userLocation
-                await MainActor.run {
-                    self.mapViewModel.currentUserLocation = userLocation
-                }
             }
             
             // 지도 위치 조회하는 위치로 변경
@@ -71,6 +72,9 @@ class HomeViewModel: ObservableObject {
             
             // 데이터 셋팅
             await MainActor.run {
+                loading = false
+                self.mapViewModel.currentUserLocation = userLocation
+                
                 // 지도 뷰모델에 마지막 검색한 위치 저장 및 데이터 셋팅
                 self.mapViewModel.lastFindCenterPosition = location
                 self.mapViewModel.setMapData(mapData, shelter)

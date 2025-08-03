@@ -118,7 +118,7 @@ class AccountUsecase {
         // TODO: 실제로는 서버에서 사용자 정보를 가져오거나 토큰에서 추출
         return User(
             id: "mock_user_id",
-            name: "테스트 사용자",
+            name: "사용자",
             email: "test@example.com"
         )
     }

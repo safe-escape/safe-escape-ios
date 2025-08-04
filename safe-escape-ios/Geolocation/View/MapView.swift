@@ -30,8 +30,8 @@ struct MapView: UIViewRepresentable {
     
     func updateUIView(_ mapView: NMFMapView, context: Context) {
         // 사용자 위치 오버레이 show/hide 및 위치 지정
-        mapView.locationOverlay.hidden = !viewModel.showUserLocation
         if let currentUserLocation = viewModel.currentUserLocation {
+            mapView.locationOverlay.hidden = false
             mapView.locationOverlay.location = NMGLatLng(lat: currentUserLocation.latitude, lng: currentUserLocation.longitude)
         }
         

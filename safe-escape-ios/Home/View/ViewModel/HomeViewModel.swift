@@ -81,9 +81,6 @@ class HomeViewModel: ObservableObject {
                 
                 // 비상구 데이터 셋팅 및 노출 여부
                 self.exitInfoViewModel.exits = mapData.exits
-                if isInsideCrowdedArea {
-                    self.mapViewModel.showUserLocation = true
-                }
                 self.showExitInfo = isInsideCrowdedArea
             }
         }

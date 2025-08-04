@@ -64,7 +64,7 @@ struct HomeView: View {
                         .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
                         .contentShape(Circle())
                         .onTapGesture {
-                            viewModel.mapViewModel.showUserLocation.toggle()
+                            viewModel.mapViewModel.updateUserLocationAndMoveCamera()
                         }
                         .padding(.top, 15)
                         .padding(.trailing, 15)

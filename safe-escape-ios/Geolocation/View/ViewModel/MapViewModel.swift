@@ -20,8 +20,7 @@ class MapViewModel: NSObject, ObservableObject {
     // Refresh 버튼 노출 여부
     @Published var showRefreshButton: Bool = false
     
-    // 사용자 현재 위치 좌표 및 노출 여부
-    @Published var showUserLocation: Bool = false
+    // 사용자 현재 위치 좌표
     @Published var currentUserLocation: Coordinate? = nil
     
     // 대피소
@@ -214,9 +213,20 @@ class MapViewModel: NSObject, ObservableObject {
             return pathOverlay
         }
         
-        // 길찾기이므로 현재 사용자 위치 force 노출 및 지도 갱신 요청
-        self.showUserLocation = true
+        // 지도 갱신 요청
         self.route = route
+    }
+    
+    // 사용자 현재 위치 업데이트 및 카메라 이동
+    func updateUserLocationAndMoveCamera() {
+        Task {
+            guard let coordinate = try? await LocationUsecase.shared.getCurrentLocation() else { return }
+            
+            await MainActor.run {
+                self.currentUserLocation = coordinate
+                self.centerPosition = coordinate
+            }
+        }
     }
 }
 

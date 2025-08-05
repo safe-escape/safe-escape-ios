@@ -20,6 +20,10 @@ struct MapView: UIViewRepresentable {
         if let center = viewModel.centerPosition {
             mapView.latitude = center.latitude
             mapView.longitude = center.longitude
+        } else {
+            // 초기값이 없으면 서울 중앙(서울시청)으로 설정
+            mapView.latitude = 37.5665
+            mapView.longitude = 126.9780
         }
         
         // 사용자 위치 오버레이 아이콘 지정

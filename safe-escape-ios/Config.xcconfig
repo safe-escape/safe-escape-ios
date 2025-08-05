@@ -11,5 +11,6 @@
 NMFNcpKeyId = __네이버_지도_API_KEY_PLACEHOLDER__
 NMFNcpKey = __네이버_지도_Client_Secret__
 TMapAppKey = __티맵_APP_KEY__
+KakaoAppKey = __카카오_지도_APP_KEY__
 
 #include? "Config.secret.xcconfig"

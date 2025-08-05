@@ -37,6 +37,11 @@ class InputAddressViewModel: ObservableObject {
     @Published var showOverlay: Bool = false
     @Published var addressList: [Address] = []
     
+    // 무한 스크롤 관련
+    @Published var isLoadingMore: Bool = false
+    @Published var hasMoreData: Bool = true
+    private var currentPage: Int = 1
+    
     // 검색 에러
     @Published var errorState: InputAddressError? = nil
     
@@ -81,12 +86,14 @@ class InputAddressViewModel: ObservableObject {
         
         // 입력한 주소 저장 및 조회
         lastFindAddress = textInputAddress
+        currentPage = 1
+        hasMoreData = true
         loading = true
         Task {
-            let addressList = try? await FindUsecase.shared.findAddress(textInputAddress)
+            let result = try? await FindUsecase.shared.findAddress(textInputAddress, page: currentPage)
             
             // 입력한 주소에 해당하는 주소 리스트가 없는 경우, No data 표시 및 다시 입력하도록 변경
-            guard let addressList = addressList, !addressList.isEmpty else {
+            guard let result = result, !result.addresses.isEmpty else {
                 await MainActor.run {
                     self.loading = false
                     self.errorState = .noData
@@ -98,7 +105,8 @@ class InputAddressViewModel: ObservableObject {
             // 주소 리스트 노출
             await MainActor.run {
                 self.loading = false
-                self.addressList = addressList
+                self.addressList = result.addresses
+                self.hasMoreData = result.hasMoreData
                 self.showOverlay = true
             }
         }
@@ -115,6 +123,35 @@ class InputAddressViewModel: ObservableObject {
         addressList = []
     }
     
+    // 더 많은 주소 로드 (무한 스크롤)
+    func loadMoreAddress() {
+        // 이미 로딩 중이거나 더 이상 데이터가 없으면 return
+        guard !isLoadingMore && hasMoreData && !lastFindAddress.isEmpty else {
+            return
+        }
+        
+        isLoadingMore = true
+        currentPage += 1
+        
+        Task {
+            let result = try? await FindUsecase.shared.findAddress(lastFindAddress, page: currentPage)
+            
+            guard let result = result else {
+                await MainActor.run {
+                    self.isLoadingMore = false
+                    self.currentPage -= 1 // 실패 시 페이지 롤백
+                }
+                return
+            }
+            
+            await MainActor.run {
+                self.addressList.append(contentsOf: result.addresses)
+                self.hasMoreData = result.hasMoreData
+                self.isLoadingMore = false
+            }
+        }
+    }
+    
     // 초기화
     func reset() {
         lastFindAddress = ""
@@ -124,5 +161,10 @@ class InputAddressViewModel: ObservableObject {
         selectedAddress = nil
         showOverlay = false
         addressList = []
+        
+        // 무한 스크롤 상태 초기화
+        currentPage = 1
+        hasMoreData = true
+        isLoadingMore = false
     }
 }

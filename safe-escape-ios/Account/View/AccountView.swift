@@ -15,13 +15,16 @@ struct AccountView: View {
         NavigationStack {
             if authManager.isLoggedIn {
                 MyPageView(accountViewModel: viewModel)
+                    .transition(.opacity)
             } else {
                 LoginView(viewModel: viewModel)
+                    .transition(.opacity)
                     .navigationDestination(isPresented: $viewModel.showSignUp) {
                         SignUpView(viewModel: viewModel)
                     }
             }
         }
+        .animation(.easeInOut(duration: 0.3), value: authManager.isLoggedIn)
         .onAppear {
             viewModel.setAuthManager(authManager)
         }

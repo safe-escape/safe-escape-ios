@@ -15,8 +15,8 @@ class FindUsecase {
     private init() {}
     
     // 주소 검색
-    func findAddress(_ input: String) async throws -> [Address] {
-        try await FindRepository.shared.findAddress(input)
+    func findAddress(_ input: String, page: Int = 1) async throws -> (addresses: [Address], hasMoreData: Bool) {
+        try await FindRepository.shared.findAddress(input, page: page)
     }
     
     // 경로 검색

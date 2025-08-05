@@ -77,3 +77,24 @@ public enum TopicFormatter {
     }
     
 }
+
+// 주어 - 이/가 조사 Formatter
+public enum SubjectFormatter {
+    // 주어 받침 여부에 따라 이/가 조사 return
+    public static func getSubjectMarker(_ word: String) -> String {
+        guard let lastChar = word.trimmingCharacters(in: .whitespacesAndNewlines).last else { return word }
+
+        let scalar = lastChar.unicodeScalars.first!.value
+
+        // 한글 유니코드 범위: 가(0xAC00) ~ 힣(0xD7A3)
+        let base: UInt32 = 0xAC00
+        let lastCharIndex = scalar - base
+
+        // 받침이 있으면: index % 28 != 0
+        let hasFinalConsonant = (lastCharIndex % 28) != 0
+
+        let marker = hasFinalConsonant ? "이" : "가"
+        return marker
+    }
+    
+}

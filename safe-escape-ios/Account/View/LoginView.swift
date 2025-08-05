@@ -164,6 +164,7 @@ struct LoginView: View {
             .padding(.bottom, 90)
         }
         .padding(.horizontal, 28)
+        .animation(.easeInOut(duration: 0.3), value: focusedField)
     }
 
     // MARK: - Login Logic

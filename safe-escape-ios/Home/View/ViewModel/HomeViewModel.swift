@@ -35,6 +35,9 @@ class HomeViewModel: ObservableObject {
     // Refresh 버튼 노출 여부
     @Published var showRefreshButton: Bool = false
     
+    // 가장 혼잡한 지역
+    @Published var mostCrowdedArea: CrowdedNearBy? = nil
+    
     // 홈 지도 데이터 조회
     func requestMapData(_ shelter: Shelter? = nil) {
         // 데이터 초기화
@@ -82,6 +85,9 @@ class HomeViewModel: ObservableObject {
                 // 비상구 데이터 셋팅 및 노출 여부
                 self.exitInfoViewModel.exits = mapData.exits
                 self.showExitInfo = isInsideCrowdedArea
+                
+                // 가장 혼잡한 지역 데이터 셋팅
+                self.mostCrowdedArea = mapData.mostCrowdedArea
             }
         }
     }
@@ -119,5 +125,40 @@ class HomeViewModel: ObservableObject {
                 self?.showRefreshButton = show
             }
             .store(in: &cancellables)
+    }
+    
+    // 혼잡도 레벨에 따른 텍스트 생성
+    func getCrowdedDisplayText(for crowdedArea: CrowdedNearBy) -> String {
+        let address = crowdedArea.address
+        let level = crowdedArea.crowded.level
+        
+        let levelText: String
+        let marker: String
+        let emoji: String
+        
+        switch level {
+        case .veryCrowded:
+            emoji = "🔥"
+            levelText = "가장 혼잡해요"
+            marker = SubjectFormatter.getSubjectMarker(address)
+        case .crowded:
+            emoji = "🔥"
+            levelText = "혼잡해요"
+            marker = SubjectFormatter.getSubjectMarker(address)
+        case .normal:
+            emoji = "🟡"
+            levelText = "보통이에요"
+            marker = TopicFormatter.getTopicMarker(address)
+        case .free:
+            emoji = "🌿"
+            levelText = "여유로워요"
+            marker = SubjectFormatter.getSubjectMarker(address)
+        }
+        
+        if level == .normal {
+            return "\(emoji) 근처에 \(address)\(marker) \(levelText)"
+        } else {
+            return "\(emoji) 근처에서 \(address)\(marker) \(levelText)"
+        }
     }
 }

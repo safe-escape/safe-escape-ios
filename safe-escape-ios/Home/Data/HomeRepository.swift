@@ -59,6 +59,19 @@ class HomeRepository {
             "도봉구", "강북구", "중랑구", "동대문구", "성북구"
         ]
         
+        // 실제 서울시 동명
+        let seoulDongs = [
+            "강남동", "역삼동", "논현동", "압구정동", "청담동", "삼성동",
+            "서초동", "반포동", "잠원동", "방배동", "양재동", "우면동",
+            "송파동", "잠실동", "문정동", "가락동", "마천동", "풍납동",
+            "광진동", "구의동", "자양동", "중곡동", "능동구역", "화양동",
+            "성동동", "왕십리동", "마장동", "사근동", "행당동", "응봉동",
+            "용산동", "이촌동", "한남동", "이태원동", "원효동", "청파동",
+            "마포동", "공덕동", "아현동", "도화동", "용강동", "대흥동",
+            "서대문동", "충정로동", "신촌동", "연희동", "홍제동", "홍은동",
+            "은평동", "응암동", "역촌동", "갈현동", "구산동", "대조동"
+        ]
+        
         let shelters = (0..<10).map { _ in
             let shelterId = String(UUID().uuidString.prefix(8))
             let shelterName = shelterNames.randomElement() ?? "구민 대피소"
@@ -116,6 +129,28 @@ class HomeRepository {
             return crowdedArea
         }
         
-        return SafetyMapData(shelters: shelters, crowded: crowded, crowdedAreas: crowdedAreas, exits: exits)
+        // 가장 혼잡한 지역 Mock 데이터 (랜덤 생성)
+        // 33% 확률로 nil, 67% 확률로 데이터 생성
+        let mostCrowdedArea: CrowdedNearBy?
+        let randomValue = Int.random(in: 0...2)
+        
+        if randomValue == 0 {
+            // 33% 확률: 데이터 없음 (nil)
+            mostCrowdedArea = nil
+        } else {
+            // 67% 확률: 랜덤 데이터 생성
+            let randomLevel = CrowdedLevel.allCases.randomElement() ?? .free
+            let randomAddress = seoulDongs.randomElement() ?? "강남동"
+            
+            mostCrowdedArea = CrowdedNearBy(
+                crowded: Crowded(
+                    coordinate: randomCoordinate(center: location, radiusInMeters: 500),
+                    level: randomLevel
+                ),
+                address: randomAddress
+            )
+        }
+        
+        return SafetyMapData(shelters: shelters, crowded: crowded, crowdedAreas: crowdedAreas, exits: exits, mostCrowdedArea: mostCrowdedArea)
     }
 }

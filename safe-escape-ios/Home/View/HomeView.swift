@@ -25,49 +25,74 @@ struct HomeView: View {
                     .padding(.horizontal, 8)
                 
                 // 혼잡한 지역 표시
-                HStack(alignment: .top, spacing: 0) {
-                    Text("🔥 근처에서 우이동이 가장 혼잡해요")
-                        .font(.notosans(type: .bold, size: 14))
-                        .multilineTextAlignment(.leading)
-                        .frame(alignment: .leading)
-                        .padding(.horizontal, 16)
-                        .padding(.top, -1)
-                        .padding(.vertical, 7)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .foregroundStyle(Color.white)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.init(hex: "eaeaea")!, lineWidth: 1)
-                        )
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            // 혼잡도 탭으로 이동
-                            navigationViewModel.navigate(.crowded)
-                        }
-                        .padding(.top, 9)
-                        .padding(.leading, 12)
-                    
-                    Spacer(minLength: 14)
-                    
-                    // 사용자 현재 위치 표시
-                    Circle()
-                        .frame(width: 34)
-                        .foregroundStyle(Color.white)
-                        .overlay {
-                            Image(.currentUserLocation)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 20)
-                        }
-                        .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
-                        .contentShape(Circle())
-                        .onTapGesture {
-                            viewModel.mapViewModel.updateUserLocationAndMoveCamera()
-                        }
-                        .padding(.top, 15)
-                        .padding(.trailing, 15)
+                if let mostCrowdedArea = viewModel.mostCrowdedArea {
+                    HStack(alignment: .top, spacing: 0) {
+                        Text(viewModel.getCrowdedDisplayText(for: mostCrowdedArea))
+                            .font(.notosans(type: .bold, size: 14))
+                            .multilineTextAlignment(.leading)
+                            .frame(alignment: .leading)
+                            .padding(.horizontal, 16)
+                            .padding(.top, -1)
+                            .padding(.vertical, 7)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .foregroundStyle(Color.white)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.init(hex: "eaeaea")!, lineWidth: 1)
+                            )
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                // 혼잡도 탭으로 이동
+                                navigationViewModel.navigate(.crowded)
+                            }
+                            .padding(.top, 9)
+                            .padding(.leading, 12)
+                        
+                        Spacer(minLength: 14)
+                        
+                        // 사용자 현재 위치 표시
+                        Circle()
+                            .frame(width: 34)
+                            .foregroundStyle(Color.white)
+                            .overlay {
+                                Image(.currentUserLocation)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 20)
+                            }
+                            .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
+                            .contentShape(Circle())
+                            .onTapGesture {
+                                viewModel.mapViewModel.updateUserLocationAndMoveCamera()
+                            }
+                            .padding(.top, 15)
+                            .padding(.trailing, 15)
+                    }
+                } else {
+                    // 혼잡도 데이터가 없는 경우 사용자 현재 위치 버튼만 표시
+                    HStack(alignment: .top, spacing: 0) {
+                        Spacer()
+                        
+                        // 사용자 현재 위치 표시
+                        Circle()
+                            .frame(width: 34)
+                            .foregroundStyle(Color.white)
+                            .overlay {
+                                Image(.currentUserLocation)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 20)
+                            }
+                            .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
+                            .contentShape(Circle())
+                            .onTapGesture {
+                                viewModel.mapViewModel.updateUserLocationAndMoveCamera()
+                            }
+                            .padding(.top, 15)
+                            .padding(.trailing, 15)
+                    }
                 }
                 
                 Spacer()

@@ -99,7 +99,7 @@ struct InputAddressView: View {
                 Spacer(minLength: height)
                 
                 ScrollView {
-                    VStack {
+                    LazyVStack(spacing: 0) {
                         // 에러 있는 경우, 에러 문구 표시
                         if let errorState = viewModel.errorState {
                             VStack {
@@ -116,7 +116,7 @@ struct InputAddressView: View {
                             }
                             .padding(.vertical, 10)
                         } else { // 그 외, 주소 리스트 노출
-                            ForEach(viewModel.addressList, id: \.road) { address in
+                            ForEach(Array(viewModel.addressList.enumerated()), id: \.element.road) { index, address in
                                 VStack(spacing: 4) {
                                     HStack {
                                         Text("도로명")
@@ -164,6 +164,27 @@ struct InputAddressView: View {
                                 .onTapGesture {
                                     viewModel.selectAddress(address)
                                 }
+                                .onAppear {
+                                    // 마지막에서 3번째 아이템이 나타나면 더 로드
+                                    if index == viewModel.addressList.count - 3 {
+                                        viewModel.loadMoreAddress()
+                                    }
+                                }
+                            }
+                            
+                            // 추가 로딩 인디케이터
+                            if viewModel.isLoadingMore {
+                                HStack {
+                                    Spacer()
+                                    ProgressView()
+                                        .tint(.accent)
+                                        .scaleEffect(0.8)
+                                    Text("더 많은 주소를 불러오는 중...")
+                                        .font(.notosans(type: .regular, size: 12))
+                                        .foregroundStyle(Color.gray)
+                                    Spacer()
+                                }
+                                .padding(.vertical, 12)
                             }
                         }
                     }

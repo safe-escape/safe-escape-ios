@@ -15,11 +15,14 @@ class FindRepository {
     private init() {}
 
     // 주소 검색
-    func findAddress(_ input: String) async throws -> [Address] {
-        let entity = try await NaverMapDataSource.shared.findAddress(input)
+    func findAddress(_ input: String, page: Int = 1) async throws -> (addresses: [Address], hasMoreData: Bool) {
+        let entity = try await KakaoMapDataSource.shared.findAddress(input, page: page)
         
         // Entity to Model
-        return entity.address.map { $0.map() }
+        let addresses = entity.address.map { $0.map() }
+        let hasMoreData = !entity.meta.isEnd
+        
+        return (addresses: addresses, hasMoreData: hasMoreData)
     }
     
     // 경로 검색

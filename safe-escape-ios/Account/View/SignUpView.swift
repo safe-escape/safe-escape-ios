@@ -80,6 +80,7 @@ struct SignUpView: View {
             )
         }
         .padding(.horizontal, 28)
+        .animation(.easeInOut(duration: 0.3), value: focusedField)
         .navigationBarBackButtonHidden(true)
     }
 

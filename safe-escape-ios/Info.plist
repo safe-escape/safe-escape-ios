@@ -8,6 +8,8 @@
 	<string>$(NMFNcpKeyId)</string>
 	<key>TMapAppKey</key>
 	<string>${TMapAppKey}</string>
+	<key>KakaoRestAPIKey</key>
+	<string>${KakaoAppKey}</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>NotoSansKR-Bold.ttf</string>

@@ -59,42 +59,69 @@ public enum TimeFormatter {
 
 // 주어 - 은/는 조사 Formatter
 public enum TopicFormatter {
-    // 주어 받침 여부에 따라 은/는 조사 return
+    private static let numberToHangul: [Character: String] = [
+        "0": "십", "1": "일", "2": "이", "3": "삼", "4": "사",
+        "5": "오", "6": "육", "7": "칠", "8": "팔", "9": "구"
+    ]
+
+    // 주어 받침 여부에 따라 은/는 조사 반환
     public static func getTopicMarker(_ word: String) -> String {
-        guard let lastChar = word.trimmingCharacters(in: .whitespacesAndNewlines).last else { return word }
+        let trimmed = word.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let lastChar = trimmed.last else { return "는" }
 
-        let scalar = lastChar.unicodeScalars.first!.value
+        let lastCharStr: String
 
-        // 한글 유니코드 범위: 가(0xAC00) ~ 힣(0xD7A3)
+        if lastChar.isNumber, let hangul = numberToHangul[lastChar] {
+            lastCharStr = hangul
+        } else {
+            lastCharStr = String(lastChar)
+        }
+
+        guard let scalar = lastCharStr.unicodeScalars.first?.value,
+              scalar >= 0xAC00 && scalar <= 0xD7A3 else {
+            return "는" // 한글이 아닌 경우 기본적으로 "는"
+        }
+
         let base: UInt32 = 0xAC00
         let lastCharIndex = scalar - base
 
-        // 받침이 있으면: index % 28 != 0
+        // 받침이 있는 경우 index % 28 != 0
         let hasFinalConsonant = (lastCharIndex % 28) != 0
-
-        let marker = hasFinalConsonant ? "은" : "는"
-        return marker
+        return hasFinalConsonant ? "은" : "는"
     }
-    
 }
+
 
 // 주어 - 이/가 조사 Formatter
 public enum SubjectFormatter {
-    // 주어 받침 여부에 따라 이/가 조사 return
+    private static let numberToHangul: [Character: String] = [
+        "0": "십", "1": "일", "2": "이", "3": "삼", "4": "사",
+        "5": "오", "6": "육", "7": "칠", "8": "팔", "9": "구"
+    ]
+
+    // 주어 받침 여부에 따라 이/가 조사 반환
     public static func getSubjectMarker(_ word: String) -> String {
-        guard let lastChar = word.trimmingCharacters(in: .whitespacesAndNewlines).last else { return word }
+        let trimmed = word.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let lastChar = trimmed.last else { return "가" }
 
-        let scalar = lastChar.unicodeScalars.first!.value
+        let lastCharStr: String
 
-        // 한글 유니코드 범위: 가(0xAC00) ~ 힣(0xD7A3)
+        if lastChar.isNumber, let hangul = numberToHangul[lastChar] {
+            lastCharStr = hangul
+        } else {
+            lastCharStr = String(lastChar)
+        }
+
+        guard let scalar = lastCharStr.unicodeScalars.first?.value,
+              scalar >= 0xAC00 && scalar <= 0xD7A3 else {
+            return "가" // 한글이 아니면 기본적으로 "가"
+        }
+
         let base: UInt32 = 0xAC00
         let lastCharIndex = scalar - base
 
-        // 받침이 있으면: index % 28 != 0
+        // 받침 여부 판별
         let hasFinalConsonant = (lastCharIndex % 28) != 0
-
-        let marker = hasFinalConsonant ? "이" : "가"
-        return marker
+        return hasFinalConsonant ? "이" : "가"
     }
-    
 }

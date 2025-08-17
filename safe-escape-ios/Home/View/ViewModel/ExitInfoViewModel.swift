@@ -44,13 +44,13 @@ class ExitInfoViewModel: ObservableObject {
     // 비상구 길찾기
     func findRoute() {
         Task {
-            // 추천 비상구 찾기
-            guard let exit = try? await findNearestExit() else {
-                return
-            }
-            
             await MainActor.run {
                 state = .loading
+            }
+            
+            // 추천 비상구 찾기
+            guard let exit = try? await HomeUsecase.shared.getBestExit(exits) else {
+                return
             }
             
             // 추천 비상구까지 길찾기 경로 조회

@@ -55,7 +55,7 @@ struct ShelterRowView: View {
 
 #Preview {
     let shelter = Shelter(
-        id: "1",
+        id: 1,
         name: "찜한대피소_1",
         address: "서울시 강남구 테헤란로 123번길",
         coordinate: Coordinate(latitude: 37.5665, longitude: 126.9780),

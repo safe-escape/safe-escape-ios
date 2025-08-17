@@ -63,7 +63,9 @@ struct MapView: UIViewRepresentable {
         }
         
         // 마커 및 오버레이 표시
-        viewModel.shelters.forEach { $0.mapView = mapView }
+        if viewModel.showShelters {
+            viewModel.shelters.forEach { $0.mapView = mapView }
+        }
         viewModel.crowded.forEach { $0.mapView = mapView }
         viewModel.crowdedAreas.forEach { $0.mapView = mapView }
         viewModel.exits.forEach { $0.marker.mapView = mapView }

@@ -64,16 +64,6 @@ class InputAddressViewModel: ObservableObject {
             return
         }
         
-        // input과 선택한 도로명 주소가 동일하면 return
-        guard textInputAddress != selectedAddress?.road else {
-            return
-        }
-        
-        // input과 선택한 도로명 주소가 동일하면 return
-        guard textInputAddress != selectedAddress?.road else {
-            return
-        }
-        
         // 주소 리스트
         addressList = []
         
@@ -116,11 +106,12 @@ class InputAddressViewModel: ObservableObject {
     func selectAddress(_ address: Address) {
         // 선택한 주소로 input 변경 및 주소 리스트 초기화
         textInputAddress = address.road
+        lastFindAddress = address.road
         
         selectedAddress = address
         
         showOverlay = false
-        addressList = []
+        addressList = [address]
     }
     
     // 더 많은 주소 로드 (무한 스크롤)

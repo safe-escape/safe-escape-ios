@@ -8,11 +8,11 @@
 import Foundation
 
 // 혼잡도 레벨
-enum CrowdedLevel: CaseIterable {
-    case free // 여유
-    case normal // 보통
-    case crowded // 조금 혼잡
-    case veryCrowded // 매우 혼잡
+enum CrowdedLevel: String, CaseIterable {
+    case free = "FREE" // 여유
+    case normal = "NORMAL" // 보통
+    case crowded = "CROWDED" // 조금 혼잡
+    case veryCrowded = "VERY_CROWDED" // 매우 혼잡
 }
 
 // 혼잡도

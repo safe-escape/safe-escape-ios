@@ -17,7 +17,7 @@ var networkCompletion: (() -> Void)?
 class APICommonPlugin: PluginType {
     func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
         var urlRequest = request
-        urlRequest.timeoutInterval = 10
+        urlRequest.timeoutInterval = 30
         return urlRequest
     }
     

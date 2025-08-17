@@ -55,6 +55,39 @@ struct CrowdedExpectView: View {
                         .labelsHidden()
                         .scaleEffect(0.95)
                     
+                    // 시간 선택 Picker
+                    VStack(spacing: 8) {
+                        Menu {
+                            ForEach(viewModel.availableHours, id: \.self) { hour in
+                                Button(viewModel.formatHourToAMPM(hour)) {
+                                    viewModel.selectedHour = hour
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Text(viewModel.formatHourToAMPM(viewModel.selectedHour))
+                                    .font(.notosans(type: .medium, size: 15))
+                                    .foregroundStyle(Color.black)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.down")
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(Color.black)
+                            }
+                            .padding(.horizontal, 16)
+                            .frame(height: 40)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(lineWidth: 1)
+                                    .foregroundStyle(Color.borderD9D9D9.opacity(0.9))
+                            )
+                        }
+                    }
+                    .padding(.top, -15)
+                    .padding(.bottom, 10)
+                    .padding(.horizontal, 10)
+                    
                     HStack(spacing: 0) {
                         Spacer()
                         
@@ -121,29 +154,33 @@ struct CrowdedExpectView: View {
                 // 혼잡도 예상 결과가 있는 경우, 주소 / 날짜 / 혼잡도 표시
                 if let crowded = viewModel.expectedCrowded, let crowdedLevel = viewModel.expectedCrowdedLevel {
                     // 주소
-                    Text(crowded.address)
+                    Text(viewModel.expectedPredictionLocation?.name ?? crowded.address)
                         .font(.notosans(type: .bold, size: 15))
-                    + Text(TopicFormatter.getTopicMarker(crowded.address) + "\n")
-                    // 날짜
-                    + Text(crowded.date.format() + "일")
+                    + Text(TopicFormatter.getTopicMarker(viewModel.expectedPredictionLocation?.name ?? crowded.address) + "\n")
+                    // 날짜와 시간
+                    + Text(crowded.date.format() + "일 " + viewModel.formatHourToAMPM(Calendar.current.component(.hour, from: crowded.date)))
                         .font(.notosans(type: .bold, size: 15))
                     + Text("에\n")
                     // 혼잡도
-                    + Text(viewModel.getCrowdedLevelText(crowdedLevel))
+                    + Text(viewModel.getPredictionCrowdedLevelText(crowdedLevel))
                         .font(.notosans(type: .bold, size: 15))
                         .foregroundColor(viewModel.getCrowdedLevelColor(crowdedLevel))
                     + Text("\(viewModel.getCrowdedLevelTextMarker(crowdedLevel)) 예정입니다")
                         .font(.notosans(type: .regular, size: 15))
-                } else if !viewModel.expectLoading, let defaultExpectedText = viewModel.defaultExpectedText { // 그 외, 로딩 중이 아니면 default text 노출
-                    defaultExpectedText.enumerated().reduce(Text("")) { result, pair in
-                        let (index, word) = pair
-                        return result + Text(word)
-                            .font(.notosans(type: index == 1 ? .bold : .regular, size: 15))
+                } else if !viewModel.expectLoading, !viewModel.defaultExpectedTexts.isEmpty { // 그 외, 로딩 중이 아니면 default text 노출 (롤링)
+                    HStack {
+                        let currentTexts = viewModel.defaultExpectedTexts[viewModel.currentDefaultTextIndex]
+                        currentTexts.enumerated().reduce(Text("")) { result, pair in
+                            let (index, word) = pair
+                            return result + Text(word)
+                                .font(.notosans(type: index == 1 ? .bold : .regular, size: 15))
+                        }
                     }
+                    .animation(.easeInOut(duration: 0.3), value: viewModel.currentDefaultTextIndex)
                 }
             }
             // 로딩 시, Skeleton UI로 로딩 화면 표시
-            .skeleton(with: viewModel.expectLoading || viewModel.defaultExpectedText == nil,
+            .skeleton(with: viewModel.expectLoading || viewModel.defaultExpectedTexts.isEmpty,
                       animation: .pulse(),
                       appearance: .solid(color: .accent.opacity(0.3),
                                          background: .accent.opacity(0.1)),

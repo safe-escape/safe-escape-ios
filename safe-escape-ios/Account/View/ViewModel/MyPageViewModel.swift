@@ -46,7 +46,9 @@ class MyPageViewModel: ObservableObject {
                 try await ShelterUsecase.shared.toggleShelterFavorite(shelter)
                 
                 // 찜 상태가 변경된 후 목록 새로고침
-                await loadFavoriteShelters()
+                await MainActor.run {
+                    favoriteShelters.removeAll(where: { $0.id == shelter.id })
+                }
                 
             } catch {
                 self.errorMessage = "찜 상태 변경에 실패했습니다."

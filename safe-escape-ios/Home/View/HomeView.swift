@@ -24,10 +24,10 @@ struct HomeView: View {
                     .padding(.top, 14)
                     .padding(.horizontal, 8)
                 
-                // 혼잡한 지역 표시
-                if let mostCrowdedArea = viewModel.mostCrowdedArea {
+                // 주위 지역 정보 표시
+                if let info = viewModel.info {
                     HStack(alignment: .top, spacing: 0) {
-                        Text(viewModel.getCrowdedDisplayText(for: mostCrowdedArea))
+                        Text(info)
                             .font(.notosans(type: .bold, size: 14))
                             .multilineTextAlignment(.leading)
                             .frame(alignment: .leading)
@@ -97,32 +97,59 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                if viewModel.showRefreshButton {
-                    // 재검색
-                    HStack(spacing: 4) {
-                        Text("현 지도 위치로 검색")
-                            .font(.notosans(type: .medium, size: 13))
+                HStack(spacing: 0) {
+                    Spacer(minLength: 0)
+                    
+                    if viewModel.showRefreshButton {
+                        // 재검색
+                        HStack(spacing: 4) {
+                            Text("현 지도 위치로 검색")
+                                .font(.notosans(type: .medium, size: 13))
+                            
+                            Image(systemName: "arrow.clockwise")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 12)
+                                .rotationEffect(.degrees(30))
+                        }
+                        .foregroundStyle(Color.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 5)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .foregroundStyle(Color.accent.opacity(0.7))
+                                .shadow(color: .black.opacity(0.25), radius: 5, y: 3)
+                        )
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            viewModel.requestMapData()
+                        }
+                        .padding(.leading, 76)
+                    }
+                    
+                    Spacer(minLength: 0)
+                    
+                    HStack(spacing: 3) {
+                        Text("대피소")
+                            .font(.notosans(type: .medium, size: 14))
+                            .padding(.bottom, 1)
                         
-                        Image(systemName: "arrow.clockwise")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 12)
-                            .rotationEffect(.degrees(30))
+                        Image(systemName: viewModel.mapViewModel.showShelters ? "checkmark.circle.fill" : "checkmark.circle")
+                            .foregroundStyle(viewModel.mapViewModel.showShelters ? Color.accentColor : Color.dimC5D6Ca)
+                            .onTapGesture {
+                                viewModel.mapViewModel.toggleShelter()
+                            }
                     }
-                    .foregroundStyle(Color.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 5)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
                     .background(
-                        RoundedRectangle(cornerRadius: 20)
-                            .foregroundStyle(Color.accent.opacity(0.7))
-                            .shadow(color: .black.opacity(0.25), radius: 5, y: 3)
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(Color.white)
+                            .shadow(color: .black.opacity(0.16), radius: 6, y: 3)
                     )
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        viewModel.requestMapData()
-                    }
-                    .padding(.bottom, 15)
                 }
+                .padding(.horizontal, 8)
+                .padding(.bottom, 15)
                 
                 if viewModel.showShelterInfo {
                     // 대피소 정보
@@ -155,6 +182,35 @@ struct HomeView: View {
     }
 }
 
-//#Preview {
-//    HomeView()
-//}
+#Preview {
+    @State var show: Bool = true
+    
+    VStack {
+        HStack(spacing: 3) {
+            Text("대피소")
+                .font(.notosans(type: .medium, size: 14))
+                .padding(.bottom, 1)
+            
+            Image(systemName: show ? "checkmark.circle.fill" : "checkmark.circle")
+//                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(show ? Color.accentColor : Color.dimC5D6Ca)
+                .onTapGesture {
+                    
+                }
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(
+            RoundedRectangle(cornerRadius: 5)
+                .fill(Color.gray)
+                .shadow(color: .black.opacity(0.16), radius: 6, y: 3)
+        )
+        
+        Toggle(isOn: $show) {
+            Text("대피소")
+                .fixedSize()
+        }
+        .tint(.accent)
+        
+    }
+}

@@ -19,7 +19,9 @@ struct SafeEscapeApp: App {
             if showIntro {
                 IntroView(show: $showIntro)
                     .onAppear {
-                        authManager.checkAutoLogin()
+                        Task {
+                            await authManager.checkAutoLogin()
+                        }
                     }
             } else {
                 MainView()

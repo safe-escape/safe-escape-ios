@@ -44,3 +44,9 @@ struct Coordinate: Equatable, Codable {
         return rounded
     }
 }
+
+// 지도 범위를 나타내는 모델 (남서쪽과 북동쪽 좌표)
+struct MapBounds {
+    let southWest: Coordinate
+    let northEast: Coordinate
+}

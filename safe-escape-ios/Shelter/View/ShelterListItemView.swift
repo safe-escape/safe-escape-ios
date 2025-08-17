@@ -11,6 +11,8 @@ import SkeletonUI
 struct ShelterListItemView: View {
     let shelter: Shelter?
     let isLoading: Bool
+    var showLiked: Bool = false
+    var onHeartTap: (() -> Void)? = nil
     let onTap: () -> Void
     
     private let appearance: AppearanceType = .solid(color: .accent.opacity(0.3),
@@ -38,8 +40,18 @@ struct ShelterListItemView: View {
             .padding(.top, isLoading ? 4 : 0)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(shelter?.name ?? "")
-                    .font(.notosans(type: .bold, size: 18))
+                HStack(alignment: .bottom, spacing: 3) {
+                    Text(shelter?.name ?? "")
+                        .font(.notosans(type: .bold, size: 18))
+                    if showLiked {
+                        Image(systemName: shelter?.liked == true ? "heart.fill" : "heart")
+                            .foregroundStyle(shelter?.liked == true ? Color.pointRed : Color.black)
+                            .onTapGesture {
+                                onHeartTap?()
+                            }
+                            .padding(.bottom, 4)
+                    }
+                }
                 
                 Text(shelter?.address ?? "")
                     .font(.notosans(type: .regular, size: 11))
@@ -90,7 +102,7 @@ struct ShelterListItemView: View {
 
 #Preview {
     let shelter = Shelter(
-        id: "1",
+        id: 1,
         name: "강남구 종합대피소",
         address: "서울시 강남구 테헤란로 123번길",
         coordinate: Coordinate(latitude: 37.5665, longitude: 126.9780),

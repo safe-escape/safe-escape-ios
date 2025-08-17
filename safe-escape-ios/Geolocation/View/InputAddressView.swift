@@ -19,12 +19,21 @@ struct InputAddressView: View {
     var body: some View {
         HStack(spacing: 0) {
             // 주소 검색 Input
-            TextField("주소 검색", text: $viewModel.textInputAddress) {
-                
-            }
+            TextField("주소 검색", text: $viewModel.textInputAddress)
             .focused($inputAddressFocused)
             .font(.notosans(type: .medium, size: 16))
             .keyboardType(.default)
+            .onSubmit {
+                // 엔터키 눌렀을 때 검색 실행
+                inputAddressFocused = false
+                
+                guard !viewModel.showOverlay else {
+                    viewModel.showOverlay = false
+                    return
+                }
+                
+                viewModel.findAddress()
+            }
             .onChange(of: inputAddressFocused) { focused in
                 guard focused, viewModel.errorState == nil else {
                     return

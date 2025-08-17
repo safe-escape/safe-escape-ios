@@ -68,7 +68,8 @@ struct CrowdedNearByListView: View {
                                 .padding(.top, viewModel.nearByLoading ? 6 : 2)
                                 .padding(.bottom, viewModel.nearByLoading ? 4 : 0)
                             
-                            Text(viewModel.getCrowdedLevelText(data))
+                            Text(viewModel
+                                .getCrowdedLevelText(data?.crowded.level))
                                 .font(.notosans(type: .regular, size: 15))
                                 .skeleton(with: viewModel.nearByLoading,
                                           animation: .pulse(),

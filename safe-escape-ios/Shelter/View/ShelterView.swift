@@ -11,6 +11,7 @@ import SkeletonUI
 struct ShelterView: View {
     @StateObject var viewModel = ShelterViewModel()
     @EnvironmentObject var navigationViewModel: NavigationViewModel
+    @EnvironmentObject var authManager: AuthenticationManager
     
     private let appearance: AppearanceType = .solid(color: .accent.opacity(0.3),
                                                     background: .accent.opacity(0.1))
@@ -57,7 +58,14 @@ struct ShelterView: View {
                         .padding(.bottom, viewModel.loading ? 3 : 0)
                             
                         SkeletonForEach(with: viewModel.shelters, quantity: viewModel.loading ? 5 : viewModel.shelters.count) { _, shelter in
-                            ShelterListItemView(shelter: shelter, isLoading: viewModel.loading) {
+                            
+                            ShelterListItemView(shelter: shelter, isLoading: viewModel.loading, showLiked: authManager.isLoggedIn, onHeartTap: {
+                                guard let shelter else {
+                                    return
+                                }
+                                
+                                viewModel.toggleShelterFavorite(shelter)
+                            }) {
                                 guard let shelter else {
                                     return
                                 }

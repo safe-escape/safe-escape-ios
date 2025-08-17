@@ -8,13 +8,13 @@
 import Foundation
 
 // 로그인 요청 모델
-struct LoginRequest {
+struct LoginRequest: Codable {
     let email: String
     let password: String
 }
 
 // 회원가입 요청 모델
-struct SignUpRequest {
+struct SignUpRequest: Codable {
     let name: String
     let email: String
     let password: String
@@ -28,6 +28,6 @@ struct LoginResponse {
 
 // 회원가입 응답 모델
 struct SignUpResponse {
-    let user: User
-    let message: String?
+    let accessToken: String
+    let refreshToken: String
 }

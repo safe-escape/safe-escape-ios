@@ -21,13 +21,21 @@ class ShelterUsecase {
                 shelter.distance = LocationUsecase.shared.getDirectDistance(from: location, to: shelter.coordinate)
                 return shelter
             }
+            .sorted(by: { $0.distance <= $1.distance })
     }
     
+    // 즐겨찾기 대피소 조회
     func getFavoriteShelters() async throws -> [Shelter] {
-        return try await ShelterRepository.shared.getFavoriteShelters()
+        let location = try await LocationUsecase.shared.getCurrentLocation()
+        return try await ShelterRepository.shared.getFavoriteShelters().map {
+            var shelter = $0
+            shelter.distance = LocationUsecase.shared.getDirectDistance(from: location, to: $0.coordinate)
+            return shelter
+        }.sorted(by: { $0.distance <= $1.distance })
     }
     
-    func toggleShelterFavorite(_ shelter: Shelter) async throws {
-        try await ShelterRepository.shared.toggleShelterFavorite(shelter)
+    // 대피소 찜하기/찜 해제 토글
+    func toggleShelterFavorite(_ shelter: Shelter) async throws -> Shelter {
+        return try await ShelterRepository.shared.toggleShelterFavorite(shelter)
     }
 }

@@ -21,8 +21,13 @@ class CrowdedUsecase {
     }
     
     // 혼잡도 예상
-    func expectCrowded(_ location: Coordinate, _ date: Date) async throws -> CrowdedLevel {
+    func expectCrowded(_ location: Coordinate, _ date: Date) async throws -> (CrowdedLevel, PredictionLocation) {
         return try await CrowdedRepository.shared.expectCrowded(location, date)
+    }
+    
+    // 혼잡도 예상 Default Text 조회 (여러개)
+    func getDefaultExpectedText() async throws -> [(CrowdedLevel, PredictionLocation)] {
+        return try await CrowdedRepository.shared.getDefaultExpectedText()
     }
     
 }

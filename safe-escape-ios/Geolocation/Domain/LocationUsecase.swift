@@ -17,7 +17,7 @@ class LocationUsecase: NSObject {
     // 캐시된 위치 정보
     private var cachedLocation: Coordinate?
     private var cacheTimestamp: Date?
-    private let cacheValidityDuration: TimeInterval = 180 // 3분
+    private let cacheValidityDuration: TimeInterval = 60 // 1분
     
     override private init() {
         super.init()
@@ -29,13 +29,14 @@ class LocationUsecase: NSObject {
     private func setupLocationManager() {
         self.locationManager = CLLocationManager()
         self.locationManager.delegate = self
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        self.locationManager.distanceFilter = kCLDistanceFilterNone
+        // 빠른 응답을 위해 정확도를 조금 낮춤 (약 10m 정확도)
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        self.locationManager.distanceFilter = 50 // 50m 이상 이동할 때만 업데이트
     }
     
     // 사용자 현재 위치
     func getCurrentLocation() async throws -> Coordinate {
-        // 캐시된 위치가 유효한지 확인
+        // 캐시된 위치가 유효한지 확인 (캐시 시간을 1분으로 단축)
         if let cachedLocation = cachedLocation,
            let cacheTimestamp = cacheTimestamp,
            Date().timeIntervalSince(cacheTimestamp) < cacheValidityDuration {
@@ -62,7 +63,17 @@ class LocationUsecase: NSObject {
                     continuation.resume(throwing: LocationError.permissionDenied)
                 case .authorizedWhenInUse, .authorizedAlways:
                     if CLLocationManager.locationServicesEnabled() {
-                        self.locationManager.requestLocation()
+                        // 빠른 위치 가져오기를 위해 startUpdatingLocation 사용
+                        self.locationManager.startUpdatingLocation()
+                        
+                        // 2초 타임아웃 설정
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                            if self.continuation != nil {
+                                self.locationManager.stopUpdatingLocation()
+                                self.continuation?.resume(throwing: LocationError.timeout)
+                                self.continuation = nil
+                            }
+                        }
                     } else {
                         self.continuation = nil
                         continuation.resume(throwing: LocationError.locationServicesDisabled)
@@ -81,6 +92,22 @@ class LocationUsecase: NSObject {
         let endLocation = CLLocation(latitude: end.latitude, longitude: end.longitude)
         
         return startLocation.distance(from: endLocation)
+    }
+    
+    private func calculateDistance(from: Coordinate, to: Coordinate) -> Double {
+        let earthRadius = 6371.0 // 지구 반지름 (km)
+        
+        let lat1Rad = from.latitude * .pi / 180
+        let lat2Rad = to.latitude * .pi / 180
+        let deltaLatRad = (to.latitude - from.latitude) * .pi / 180
+        let deltaLonRad = (to.longitude - from.longitude) * .pi / 180
+        
+        let a = sin(deltaLatRad / 2) * sin(deltaLatRad / 2) +
+                cos(lat1Rad) * cos(lat2Rad) *
+                sin(deltaLonRad / 2) * sin(deltaLonRad / 2)
+        let c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        
+        return earthRadius * c
     }
 
     // 좌표가 폴리곤 안에 위치해있는지 판단 (Winding Number 알고리즘 사용)
@@ -126,6 +153,7 @@ class LocationUsecase: NSObject {
 extension LocationUsecase: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.first else {
+            manager.stopUpdatingLocation()
             continuation?.resume(throwing: LocationError.locationNotFound)
             continuation = nil
             return
@@ -140,11 +168,15 @@ extension LocationUsecase: CLLocationManagerDelegate {
         cachedLocation = coordinate
         cacheTimestamp = Date()
         
+        // 위치 업데이트 중지
+        manager.stopUpdatingLocation()
+        
         continuation?.resume(returning: coordinate)
         continuation = nil
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        manager.stopUpdatingLocation()
         continuation?.resume(throwing: LocationError.locationFailed(error))
         continuation = nil
     }
@@ -155,7 +187,16 @@ extension LocationUsecase: CLLocationManagerDelegate {
         switch status {
         case .authorizedWhenInUse, .authorizedAlways:
             if CLLocationManager.locationServicesEnabled() {
-                manager.requestLocation()
+                manager.startUpdatingLocation()
+                
+                // 2초 타임아웃 설정
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    if self.continuation != nil {
+                        manager.stopUpdatingLocation()
+                        self.continuation?.resume(throwing: LocationError.timeout)
+                        self.continuation = nil
+                    }
+                }
             } else {
                 continuation.resume(throwing: LocationError.locationServicesDisabled)
                 self.continuation = nil
@@ -180,6 +221,7 @@ enum LocationError: Error, LocalizedError {
     case locationNotFound
     case locationFailed(Error)
     case requestInProgress
+    case timeout
     case unknown
     
     var errorDescription: String? {
@@ -194,6 +236,8 @@ enum LocationError: Error, LocalizedError {
             return "위치 조회 실패: \(error.localizedDescription)"
         case .requestInProgress:
             return "이미 위치 요청이 진행 중입니다."
+        case .timeout:
+            return "위치 조회 시간이 초과되었습니다."
         case .unknown:
             return "알 수 없는 위치 오류가 발생했습니다."
         }

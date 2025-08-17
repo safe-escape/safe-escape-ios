@@ -77,8 +77,12 @@ class AccountViewModel: ObservableObject {
     }
     
     func logout() {
-        authManager.logout()
-        clearAllFields()
+        Task {
+            await authManager.logout()
+            await MainActor.run {
+                clearAllFields()
+            }
+        }
     }
     
     func showSignUpView() {

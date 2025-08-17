@@ -16,6 +16,8 @@ class MapViewModel: NSObject, ObservableObject {
     var currentCenterPosition: Coordinate?
     // 마지막으로 검색한 지도 위치
     var lastFindCenterPosition: Coordinate?
+    // 현재 지도 범위
+    var currentBounds: MapBounds?
     
     // Refresh 버튼 노출 여부
     @Published var showRefreshButton: Bool = false
@@ -26,6 +28,15 @@ class MapViewModel: NSObject, ObservableObject {
     // 대피소
     var shelters: [NMFMarker] = []
     @Published var selectedShelter: Shelter?
+    @Published var showShelters: Bool = true {
+        didSet {
+//            guard oldValue != showShelters else {
+//                return
+//            }
+//            
+//            toggleShelter()
+        }
+    }
     
     // 혼잡도 / 혼잡 지역 / 비상구
     var crowded: [NMFCircleOverlay] = []
@@ -93,7 +104,7 @@ class MapViewModel: NSObject, ObservableObject {
         crowded = data.crowded.map { crowded in
             let overlay = NMFCircleOverlay()
             overlay.center = NMGLatLng(lat: crowded.coordinate.latitude, lng: crowded.coordinate.longitude)
-            overlay.radius = 500 // 반경 500m
+            overlay.radius = 250 // 반경 250m
             
             // 혼잡도에 따른 색상 설정
             switch crowded.level {
@@ -111,22 +122,29 @@ class MapViewModel: NSObject, ObservableObject {
             return overlay
         }
         
+        self.exits = []
+        
         // 혼잡 지역(폴리곤 오버레이)
         crowdedAreas = data.crowdedAreas.compactMap { crowdedArea in
             let coordinates = crowdedArea.coordinates.map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
             let overlay = NMFPolygonOverlay(coordinates)
             overlay?.fillColor = .accent.withAlphaComponent(0.2)
+            
+            // 비상구 마커
+            exits.append(contentsOf: crowdedArea.exits.map { exit in
+                let marker = NMFMarker(position: NMGLatLng(lat: exit.coordinate.latitude, lng: exit.coordinate.longitude), iconImage: exitMarkerImage)
+                marker.width = 48
+                marker.height = 48
+                
+                // 선택된 비상구 처리를 위해 tuple로 저장
+                return (exit, marker)
+            })
+            
             return overlay
         }
         
-        // 비상구 마커
-        exits = data.exits.map { exit in
-            let marker = NMFMarker(position: NMGLatLng(lat: exit.coordinate.latitude, lng: exit.coordinate.longitude), iconImage: exitMarkerImage)
-            marker.width = 48
-            marker.height = 48
-            
-            // 선택된 비상구 처리를 위해 tuple로 저장
-            return (exit, marker)
+        if selectedShelterMarker != nil {
+            showShelters = true
         }
         
         // 지도 UI 갱신 요청
@@ -151,6 +169,17 @@ class MapViewModel: NSObject, ObservableObject {
         exits.forEach { $0.marker.mapView = nil }
         
         clearRoute()
+    }
+    
+    func toggleShelter() {
+        showShelters.toggle()
+        guard !showShelters else {
+            needUpdateMapOverlay = true
+            return
+        }
+        
+        shelters.forEach { $0.mapView = nil }
+        clearShelterRoute()
     }
     
     // 대피소 마커 상태 reset
@@ -238,6 +267,12 @@ extension MapViewModel: NMFMapViewCameraDelegate {
         // 마지막으로 검색한 위치에서 현재 지도 위치(카메라 좌표)가 1km 이상 차이나는 경우, refresh 버튼 노출
         let currentCenterPossition = Coordinate(latitude: mapView.cameraPosition.target.lat, longitude: mapView.cameraPosition.target.lng)
         self.currentCenterPosition = currentCenterPossition
+        
+        if currentUserLocation != nil {
+            let bounds = mapView.coveringBounds
+            currentBounds = MapBounds(southWest: Coordinate(latitude: bounds.southWestLat, longitude: bounds.southWestLng),
+                                      northEast: Coordinate(latitude: bounds.northEastLat, longitude: bounds.northEastLng))
+        }
         
         guard let lastCenterPosition = self.lastFindCenterPosition else {
             return

@@ -8,25 +8,28 @@
 import Foundation
 
 // 로그인 API 응답 Entity
-struct LoginResponseEntity: ResponseEntity {
-    let success: Bool
+struct LoginResponseEntity: ResponseEntity, APIErrorCode {
+    let code: String
     let data: LoginDataEntity?
+    
+    var success: Bool {
+        return code.uppercased() == "OK"
+    }
 }
 
 // 로그인 데이터 Entity
 struct LoginDataEntity: Entity {
-    let user: UserEntity
     let accessToken: String
     let refreshToken: String
-    let expiresIn: Int?
-    let tokenType: String?
+    let user: MemberDataEntity
+    
+    typealias Model = LoginResponse
     
     func map() -> LoginResponse {
         let tokens = TokenModel(
             accessToken: accessToken,
             refreshToken: refreshToken,
-            expiresIn: expiresIn,
-            tokenType: tokenType ?? "Bearer"
+            expiresIn: 3600 // 기본값, 실제로는 서버에서 받아야 함
         )
         
         return LoginResponse(

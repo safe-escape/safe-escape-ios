@@ -17,6 +17,17 @@ protocol ResponseEntity: Codable {
     var data: DataEntity? { get }
 }
 
+// API 에러 코드를 가진 Entity
+protocol APIErrorCode {
+    var code: String { get }
+}
+
+// 공통 에러 응답 Entity (제네릭 바인딩 실패 시 사용)
+struct CommonErrorResponseEntity: Codable, APIErrorCode {
+    let code: String
+    let message: String?
+}
+
 // 각 데이터 Enity
 protocol Entity: Codable {
     // 변경할 Domain Model 타입 지정 및 변환

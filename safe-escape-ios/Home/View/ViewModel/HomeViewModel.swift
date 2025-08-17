@@ -35,14 +35,15 @@ class HomeViewModel: ObservableObject {
     // Refresh 버튼 노출 여부
     @Published var showRefreshButton: Bool = false
     
-    // 가장 혼잡한 지역
-    @Published var mostCrowdedArea: CrowdedNearBy? = nil
+    // 주위 지역 정보
+    @Published var info: String? = nil
     
     // 홈 지도 데이터 조회
     func requestMapData(_ shelter: Shelter? = nil) {
         // 데이터 초기화
         mapViewModel.clearMap()
         mapViewModel.showRefreshButton = false
+        info = nil
         showExitInfo = false
         exitInfoViewModel.reset()
         showShelterInfo = false
@@ -50,44 +51,100 @@ class HomeViewModel: ObservableObject {
         loading = true
         
         Task {
+            defer {
+                DispatchQueue.main.async {
+                    self.loading = false
+                }
+            }
+            
+            if let shelter = shelter {
+                // 지도 위치 조회하는 위치로 변경
+                await MainActor.run {
+                    self.mapViewModel.centerPosition = shelter.coordinate
+                    self.mapViewModel.lastFindCenterPosition = shelter.coordinate
+                }
+                try await Task.sleep(for: .milliseconds(700))
+            }
+            
             // 검색할 위치 지정 - 지도 현재 위치 좌표 있으면 해당 위치로 / 그 외엔 사용자 현재 위치 기반
             let userLocation = try await LocationUsecase.shared.getCurrentLocation()
             var location: Coordinate! = mapViewModel.currentCenterPosition
             if location == nil || mapViewModel.lastFindCenterPosition == nil {
                 // 최초 로드이므로 사용자 위치 설정
                 location = userLocation
+                await MainActor.run {
+                    self.mapViewModel.currentUserLocation = userLocation
+                }
+                try await Task.sleep(for: .milliseconds(500))
             }
             
             // 지도 위치 조회하는 위치로 변경
             await MainActor.run {
                 self.mapViewModel.centerPosition = location
+                self.mapViewModel.lastFindCenterPosition = location
+            }
+            
+            var bounds: MapBounds!
+            var count = 0
+            repeat {
+                try await Task.sleep(for: .milliseconds(100))
+                bounds = self.mapViewModel.currentBounds
+                count += 1
+            } while count < 5 && bounds == nil
+            
+            if bounds == nil {
+                // TODO: 에러 처리
+                return
             }
             
             // 데이터 조회
-            guard let mapData = try? await HomeUsecase.shared.requestData(location) else {
+            guard let mapData = try? await HomeUsecase.shared.requestData(bounds) else {
                 return
             }
             
             // 혼잡 지역 내에 위치해 있는지 판단
-            let isInsideCrowdedArea = mapData.crowdedAreas.contains(where: { crowdedArea in
-                LocationUsecase.shared.isCoordinateInsidePolygon(point: userLocation, polygon: crowdedArea.coordinates)
-            })
+            var userCrowdedAreaExits: [Exit] = []
+            var userIsInsideCrowdedArea = false
+            mapData.crowdedAreas.forEach { crowdedArea in
+                let isInsideCrowedeArea = LocationUsecase.shared.isCoordinateInsidePolygon(point: userLocation, polygon: crowdedArea.coordinates)
+                if isInsideCrowedeArea {
+                    userIsInsideCrowdedArea = true
+                    userCrowdedAreaExits.append(contentsOf: crowdedArea.exits)
+                }
+            }
             
             // 데이터 셋팅
             await MainActor.run {
                 loading = false
                 self.mapViewModel.currentUserLocation = userLocation
                 
-                // 지도 뷰모델에 마지막 검색한 위치 저장 및 데이터 셋팅
-                self.mapViewModel.lastFindCenterPosition = location
+                self.shelterInfoViewModel.setShelterList(mapData.shelters)
+                
+                // 지도 뷰모델에 데이터 셋팅
                 self.mapViewModel.setMapData(mapData, shelter)
                 
                 // 비상구 데이터 셋팅 및 노출 여부
-                self.exitInfoViewModel.exits = mapData.exits
-                self.showExitInfo = isInsideCrowdedArea
+                self.exitInfoViewModel.exits = userCrowdedAreaExits
+                self.showExitInfo = userIsInsideCrowdedArea
                 
-                // 가장 혼잡한 지역 데이터 셋팅
-                self.mostCrowdedArea = mapData.mostCrowdedArea
+                // 주위 지역 정보 셋팅
+                if let nearbyPopulation = mapData.nearbyPopulation {
+                    var crowdedImoji = ""
+                    var crowdedLevelText = ""
+                    switch nearbyPopulation.crowded.level {
+                    case .free:
+                        crowdedImoji = "🌿"
+                        crowdedLevelText = "가장 여유로워요"
+                    case .normal:
+                        crowdedImoji = "😶"
+                        crowdedLevelText = "보통이에요"
+                    case .crowded, .veryCrowded:
+                        crowdedImoji = "🔥"
+                        crowdedLevelText = "가장 혼잡해요"
+                    }
+                    
+                    self.info = "\(crowdedImoji) 근처에서 \(nearbyPopulation.address)\(SubjectFormatter.getSubjectMarker(nearbyPopulation.address)) \(crowdedLevelText)"
+                }
             }
         }
     }
@@ -125,40 +182,18 @@ class HomeViewModel: ObservableObject {
                 self?.showRefreshButton = show
             }
             .store(in: &cancellables)
+        
+        // 지도 뷰모델 -> 대피소 노출 on/off 설정
+        mapViewModel.$showShelters
+            .sink { [weak self] show in
+                guard !show else {
+                    self?.showShelterInfo = false
+                    return
+                }
+                
+                self?.showShelterInfo = false
+            }
+            .store(in: &cancellables)
     }
     
-    // 혼잡도 레벨에 따른 텍스트 생성
-    func getCrowdedDisplayText(for crowdedArea: CrowdedNearBy) -> String {
-        let address = crowdedArea.address
-        let level = crowdedArea.crowded.level
-        
-        let levelText: String
-        let marker: String
-        let emoji: String
-        
-        switch level {
-        case .veryCrowded:
-            emoji = "🔥"
-            levelText = "가장 혼잡해요"
-            marker = SubjectFormatter.getSubjectMarker(address)
-        case .crowded:
-            emoji = "🔥"
-            levelText = "혼잡해요"
-            marker = SubjectFormatter.getSubjectMarker(address)
-        case .normal:
-            emoji = "🟡"
-            levelText = "보통이에요"
-            marker = TopicFormatter.getTopicMarker(address)
-        case .free:
-            emoji = "🌿"
-            levelText = "여유로워요"
-            marker = SubjectFormatter.getSubjectMarker(address)
-        }
-        
-        if level == .normal {
-            return "\(emoji) 근처에 \(address)\(marker) \(levelText)"
-        } else {
-            return "\(emoji) 근처에서 \(address)\(marker) \(levelText)"
-        }
-    }
 }

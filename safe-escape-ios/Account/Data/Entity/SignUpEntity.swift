@@ -8,20 +8,26 @@
 import Foundation
 
 // 회원가입 API 응답 Entity
-struct SignUpResponseEntity: ResponseEntity {
-    let success: Bool
+struct SignUpResponseEntity: ResponseEntity, APIErrorCode {
+    let code: String
     let data: SignUpDataEntity?
+    
+    var success: Bool {
+        return code.uppercased() == "OK"
+    }
 }
 
 // 회원가입 데이터 Entity
 struct SignUpDataEntity: Entity {
-    let user: UserEntity
-    let message: String?
+    let accessToken: String
+    let refreshToken: String
+    
+    typealias Model = SignUpResponse
     
     func map() -> SignUpResponse {
         return SignUpResponse(
-            user: user.map(),
-            message: message
+            accessToken: accessToken,
+            refreshToken: refreshToken
         )
     }
 }

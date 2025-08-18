@@ -17,9 +17,12 @@ class ShelterInfoViewModel: ObservableObject {
     // 대피소
     var shelter: Shelter! {
         didSet {
+            liked = shelterLikedDic[shelter.id] ?? false
+            guard let oldValue = oldValue, shelter.id != oldValue.id else {
+                return
+            }
             // 대피소 데이터 새로 설정될 때마다, 관련 데이터 초기화
             route = nil
-            liked = shelterLikedDic[shelter.id] ?? false
             loading = false
         }
     }

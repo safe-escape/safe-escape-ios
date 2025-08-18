@@ -154,9 +154,9 @@ struct CrowdedExpectView: View {
                 // 혼잡도 예상 결과가 있는 경우, 주소 / 날짜 / 혼잡도 표시
                 if let crowded = viewModel.expectedCrowded, let crowdedLevel = viewModel.expectedCrowdedLevel {
                     // 주소
-                    Text(viewModel.expectedPredictionLocation?.name ?? crowded.address)
+                    Text(crowded.address)
                         .font(.notosans(type: .bold, size: 15))
-                    + Text(TopicFormatter.getTopicMarker(viewModel.expectedPredictionLocation?.name ?? crowded.address) + "\n")
+                    + Text(TopicFormatter.getTopicMarker(crowded.address) + "\n")
                     // 날짜와 시간
                     + Text(crowded.date.format() + "일 " + viewModel.formatHourToAMPM(Calendar.current.component(.hour, from: crowded.date)))
                         .font(.notosans(type: .bold, size: 15))

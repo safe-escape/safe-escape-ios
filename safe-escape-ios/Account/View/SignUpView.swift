@@ -10,6 +10,7 @@ import SwiftUI
 struct SignUpView: View {
     @ObservedObject var viewModel: AccountViewModel
     @FocusState private var focusedField: Field?
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         VStack(spacing: 20) {
@@ -82,6 +83,11 @@ struct SignUpView: View {
         .padding(.horizontal, 28)
         .animation(.easeInOut(duration: 0.3), value: focusedField)
         .navigationBarBackButtonHidden(true)
+        .onChange(of: viewModel.showSignUp) { newValue in
+            if !newValue {
+                dismiss()
+            }
+        }
     }
 
     // MARK: - SignUp Logic

@@ -65,9 +65,7 @@ class AccountViewModel: ObservableObject {
             
             switch result {
             case .success():
-                // 회원가입 성공 시 로그인 폼에 이메일/비밀번호 자동 입력
-                loginEmail = signUpEmail
-                loginPassword = signUpPassword
+                // 회원가입 성공 시 자동 로그인이므로 해당 뷰 닫기
                 clearSignUpFields()
                 showSignUp = false
             case .failure(let error):

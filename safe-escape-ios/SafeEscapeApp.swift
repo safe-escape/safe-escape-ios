@@ -8,10 +8,27 @@
 import SwiftUI
 
 @main
-struct safe_escape_iosApp: App {
+struct SafeEscapeApp: App {
+    @State var showIntro: Bool = true
+    @StateObject var navigationViewModel: NavigationViewModel = .init()
+    @StateObject var keyboardManager: KeyboardManager = .init()
+    @StateObject var authManager: AuthenticationManager = .init()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if showIntro {
+                IntroView(show: $showIntro)
+                    .onAppear {
+                        Task {
+                            await authManager.checkAutoLogin()
+                        }
+                    }
+            } else {
+                MainView()
+                    .environmentObject(navigationViewModel)
+                    .environmentObject(keyboardManager)
+                    .environmentObject(authManager)
+            }
         }
     }
 }

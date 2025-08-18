@@ -6,13 +6,32 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B41DD8A42E2769D000BC1FE2 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = B41DD8A32E2769D000BC1FE2 /* Moya */; };
+		B41DD8A72E276A7800BC1FE2 /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = B41DD8A62E276A7800BC1FE2 /* NMapsMap */; };
+		B49E8FC02E37171D00D80AF9 /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = B49E8FBF2E37171D00D80AF9 /* SkeletonUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		B4D318422E2629E500FEAD5E /* safe-escape-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "safe-escape-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B41DD8A92E276AFC00BC1FE2 /* Exceptions for "safe-escape-ios" folder in "safe-escape-ios" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B4D318412E2629E500FEAD5E /* safe-escape-ios */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B4D318442E2629E500FEAD5E /* safe-escape-ios */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B41DD8A92E276AFC00BC1FE2 /* Exceptions for "safe-escape-ios" folder in "safe-escape-ios" target */,
+			);
 			path = "safe-escape-ios";
 			sourceTree = "<group>";
 		};
@@ -23,6 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B41DD8A42E2769D000BC1FE2 /* Moya in Frameworks */,
+				B49E8FC02E37171D00D80AF9 /* SkeletonUI in Frameworks */,
+				B41DD8A72E276A7800BC1FE2 /* NMapsMap in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +87,9 @@
 			);
 			name = "safe-escape-ios";
 			packageProductDependencies = (
+				B41DD8A32E2769D000BC1FE2 /* Moya */,
+				B41DD8A62E276A7800BC1FE2 /* NMapsMap */,
+				B49E8FBF2E37171D00D80AF9 /* SkeletonUI */,
 			);
 			productName = "safe-escape-ios";
 			productReference = B4D318422E2629E500FEAD5E /* safe-escape-ios.app */;
@@ -94,6 +119,11 @@
 			);
 			mainGroup = B4D318392E2629E500FEAD5E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B41DD8A22E2769D000BC1FE2 /* XCRemoteSwiftPackageReference "Moya" */,
+				B41DD8A52E276A7800BC1FE2 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
+				B49E8FBE2E37171D00D80AF9 /* XCRemoteSwiftPackageReference "SkeletonUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B4D318432E2629E500FEAD5E /* Products */;
 			projectDirPath = "";
@@ -127,6 +157,8 @@
 /* Begin XCBuildConfiguration section */
 		B4D3184B2E2629E600FEAD5E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B4D318442E2629E500FEAD5E /* safe-escape-ios */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -191,6 +223,8 @@
 		};
 		B4D3184C2E2629E600FEAD5E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B4D318442E2629E500FEAD5E /* safe-escape-ios */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -251,16 +285,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEVELOPMENT_TEAM = 82284R328R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "safe-escape-ios/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "대피를 도와줘!";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "주변의 혼잡도와 대피소 정보를 알려주기 위해서 사용자의 위치가 필요합니다";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -269,9 +309,14 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = team.opensource.safe.escape;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -280,16 +325,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEVELOPMENT_TEAM = 82284R328R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "safe-escape-ios/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "대피를 도와줘!";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "주변의 혼잡도와 대피소 정보를 알려주기 위해서 사용자의 위치가 필요합니다";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -298,9 +349,14 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = team.opensource.safe.escape;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -326,6 +382,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B41DD8A22E2769D000BC1FE2 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
+		B41DD8A52E276A7800BC1FE2 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/navermaps/SPM-NMapsMap";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.22.0;
+			};
+		};
+		B49E8FBE2E37171D00D80AF9 /* XCRemoteSwiftPackageReference "SkeletonUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CSolanaM/SkeletonUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B41DD8A32E2769D000BC1FE2 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B41DD8A22E2769D000BC1FE2 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+		B41DD8A62E276A7800BC1FE2 /* NMapsMap */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B41DD8A52E276A7800BC1FE2 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
+			productName = NMapsMap;
+		};
+		B49E8FBF2E37171D00D80AF9 /* SkeletonUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B49E8FBE2E37171D00D80AF9 /* XCRemoteSwiftPackageReference "SkeletonUI" */;
+			productName = SkeletonUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B4D3183A2E2629E500FEAD5E /* Project object */;
 }

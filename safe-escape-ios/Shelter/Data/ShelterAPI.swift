@@ -16,7 +16,7 @@ enum ShelterAPI {
 
 extension ShelterAPI: TargetType {
     var baseURL: URL {
-        return URL(string: "https://terrapin-fresh-haddock.ngrok-free.app")!
+        return URL(string: ServerDomain.API.baseURL)!
     }
     
     var path: String {

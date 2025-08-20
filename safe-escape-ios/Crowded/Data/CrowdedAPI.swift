@@ -17,9 +17,9 @@ extension CrowdedAPI: TargetType {
     var baseURL: URL {
         switch self {
         case .getNearByCrowded:
-            return URL(string: "https://terrapin-fresh-haddock.ngrok-free.app")!
+            return URL(string: ServerDomain.API.baseURL)!
         case .getPrediction:
-            return URL(string: "https://6095d6084855.ngrok-free.app")!
+            return URL(string: ServerDomain.AIModel.baseURL)!
         }
     }
     

@@ -18,7 +18,7 @@ enum AuthAPI {
 
 extension AuthAPI: TargetType {
     var baseURL: URL {
-        URL(string: "https://terrapin-fresh-haddock.ngrok-free.app")!
+        URL(string: ServerDomain.API.baseURL)!
     }
     
     var path: String {
